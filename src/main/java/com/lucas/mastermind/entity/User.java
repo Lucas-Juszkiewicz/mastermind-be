@@ -9,9 +9,8 @@ import lombok.Data;
 @Data
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @NotBlank
     private Long id;
 
     @Column(name = "nick")
