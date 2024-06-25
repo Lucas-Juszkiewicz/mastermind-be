@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @Column(name = "nick")
@@ -33,9 +36,18 @@ public class User {
     @Column(name = "total")
     private Long total;
 
+    @Lob
     @Column(name = "img")
-    private String img;
+    private byte[] img;
 
     @Column(name = "avatar")
     private int avatar;
+
+    @Column(name = "registration_date", updatable = false)
+    private LocalDateTime registrationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        registrationDate = LocalDateTime.now();
+    }
 }

@@ -34,6 +34,21 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
+    public User updateUser(Long userId, User userWithUpdate) {
+        Optional<User> userUpdatedAndSaved = userRepository.findById(userId).map(user -> {
+            user.setNick(userWithUpdate.getNick());
+            user.setEmail(userWithUpdate.getEmail());
+            user.setCountry(userWithUpdate.getCountry());
+            user.setPassword(userWithUpdate.getPassword());
+            user.setGames(userWithUpdate.getGames());
+            user.setTotal(userWithUpdate.getTotal());
+            user.setImg(userWithUpdate.getImg());
+            user.setAvatar(userWithUpdate.getAvatar());
+            return userRepository.save(user);
+        });
+        return unwrapUser(userUpdatedAndSaved, userId);
+    }
+
     static User unwrapUser(Optional<User> user, Long userId){
         if(user.isPresent()) return user.get();
         else throw new UserNotFoundException(userId);

@@ -25,6 +25,14 @@ public class UserController {
         return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User userWithUpdate) {
+        User updatedUser = userService.updateUser(id, userWithUpdate);
+
+            return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
+
+    }
+
     @GetMapping("/get/{userId}")
     public ResponseEntity<User> getUser(@PathVariable Long userId) {
         User userById = userService.getUserById(userId);
