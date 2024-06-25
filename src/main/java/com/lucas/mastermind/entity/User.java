@@ -45,4 +45,9 @@ public class User {
 
     @Column(name = "registration_date", updatable = false)
     private LocalDateTime registrationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        registrationDate = LocalDateTime.now();
+    }
 }
