@@ -1,7 +1,9 @@
 package com.lucas.mastermind.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,11 +18,13 @@ public class User {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "nick")
+    @Column(name = "nick", unique = true)
+    @Size(max = 20, message = "Nick needs to have a maximum of 20 characters.")
     @NotBlank(message = "You have to provide your Nick!")
     private String nick;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
+    @Email
     private String email;
 
     @Column(name = "country")

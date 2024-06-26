@@ -1,10 +1,14 @@
 package com.lucas.mastermind.service;
 
 import com.lucas.mastermind.entity.User;
+import com.lucas.mastermind.exception.DuplicateEmailException;
+import com.lucas.mastermind.exception.DuplicateNickException;
 import com.lucas.mastermind.exception.UserNotFoundException;
 import com.lucas.mastermind.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +21,23 @@ public class UserService {
     UserRepository userRepository;
 
     public User saveUser(User user){
-        User savedUser = userRepository.save(user);
-        return savedUser;
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
+                String constraintName = constraintViolationException.getConstraintName();
+                System.out.println(constraintName);
+                if (constraintName != null) {
+                    if (constraintName.equals("users.unique_nick")) {
+                        throw new DuplicateNickException("Nick '" + user.getNick() + "' is already taken.");
+                    } else if (constraintName.equals("users.unique_email")) {
+                        throw new DuplicateEmailException("Email '" + user.getEmail() + "' is already registered.");
+                    }
+                }
+            }
+            throw e;
+        }
     }
 
     public User getUserById(Long userId){
@@ -35,18 +54,31 @@ public class UserService {
     }
 
     public User updateUser(Long userId, User userWithUpdate) {
-        Optional<User> userUpdatedAndSaved = userRepository.findById(userId).map(user -> {
-            user.setNick(userWithUpdate.getNick());
-            user.setEmail(userWithUpdate.getEmail());
-            user.setCountry(userWithUpdate.getCountry());
-            user.setPassword(userWithUpdate.getPassword());
-            user.setGames(userWithUpdate.getGames());
-            user.setTotal(userWithUpdate.getTotal());
-            user.setImg(userWithUpdate.getImg());
-            user.setAvatar(userWithUpdate.getAvatar());
-            return userRepository.save(user);
-        });
-        return unwrapUser(userUpdatedAndSaved, userId);
+        try {
+            Optional<User> userUpdatedAndSaved = userRepository.findById(userId).map(user -> {
+                user.setNick(userWithUpdate.getNick());
+                user.setEmail(userWithUpdate.getEmail());
+                user.setCountry(userWithUpdate.getCountry());
+                user.setPassword(userWithUpdate.getPassword());
+                user.setGames(userWithUpdate.getGames());
+                user.setTotal(userWithUpdate.getTotal());
+                user.setImg(userWithUpdate.getImg());
+                user.setAvatar(userWithUpdate.getAvatar());
+                return userRepository.save(user);
+            });
+            return unwrapUser(userUpdatedAndSaved, userId);
+        } catch (DataIntegrityViolationException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
+                String constraintName = constraintViolationException.getConstraintName();
+                if (constraintName.equals("unique_nick")) {
+                    throw new DuplicateNickException("Nick '" + userWithUpdate.getNick() + "' is already taken.");
+                } else if (constraintName.equals("unique_email")) {
+                    throw new DuplicateEmailException("Email '" + userWithUpdate.getEmail() + "' is already registered.");
+                }
+            }
+            throw e;
+        }
     }
 
     static User unwrapUser(Optional<User> user, Long userId){
@@ -54,4 +86,3 @@ public class UserService {
         else throw new UserNotFoundException(userId);
     }
 }
-
