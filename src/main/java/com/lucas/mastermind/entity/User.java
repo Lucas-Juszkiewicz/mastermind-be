@@ -1,6 +1,7 @@
 package com.lucas.mastermind.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -22,7 +23,8 @@ public class User {
     @NotBlank(message = "You have to provide your Nick!")
     private String nick;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
+    @Email
     private String email;
 
     @Column(name = "country")

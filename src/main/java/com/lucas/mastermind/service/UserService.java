@@ -1,6 +1,7 @@
 package com.lucas.mastermind.service;
 
 import com.lucas.mastermind.entity.User;
+import com.lucas.mastermind.exception.DuplicateEmailException;
 import com.lucas.mastermind.exception.DuplicateNickException;
 import com.lucas.mastermind.exception.UserNotFoundException;
 import com.lucas.mastermind.repository.UserRepository;
@@ -21,11 +22,19 @@ public class UserService {
 
     public User saveUser(User user){
         try {
-            User savedUser = userRepository.save(user);
-            return savedUser;
+            return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             if (e.getCause() instanceof ConstraintViolationException) {
-                throw new DuplicateNickException("Nick '" + user.getNick() + "' is already taken.");
+                ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
+                String constraintName = constraintViolationException.getConstraintName();
+                System.out.println(constraintName);
+                if (constraintName != null) {
+                    if (constraintName.equals("users.unique_nick")) {
+                        throw new DuplicateNickException("Nick '" + user.getNick() + "' is already taken.");
+                    } else if (constraintName.equals("users.unique_email")) {
+                        throw new DuplicateEmailException("Email '" + user.getEmail() + "' is already registered.");
+                    }
+                }
             }
             throw e;
         }
@@ -60,7 +69,13 @@ public class UserService {
             return unwrapUser(userUpdatedAndSaved, userId);
         } catch (DataIntegrityViolationException e) {
             if (e.getCause() instanceof ConstraintViolationException) {
-                throw new DuplicateNickException("Nick '" + userWithUpdate.getNick() + "' is already taken.");
+                ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
+                String constraintName = constraintViolationException.getConstraintName();
+                if (constraintName.equals("unique_nick")) {
+                    throw new DuplicateNickException("Nick '" + userWithUpdate.getNick() + "' is already taken.");
+                } else if (constraintName.equals("unique_email")) {
+                    throw new DuplicateEmailException("Email '" + userWithUpdate.getEmail() + "' is already registered.");
+                }
             }
             throw e;
         }
@@ -71,4 +86,3 @@ public class UserService {
         else throw new UserNotFoundException(userId);
     }
 }
-
