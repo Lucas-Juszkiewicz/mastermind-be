@@ -3,7 +3,9 @@ package com.lucas.mastermind.entity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -11,6 +13,8 @@ import java.util.Random;
 @Entity
 @Table(name = "game_in_progress")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class GameInProgress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +30,27 @@ public class GameInProgress {
     @Column(name = "finish_time", updatable = false)
     private LocalDateTime finishTime;
 
-    @Column(name = "sequence", updatable = false)
+    @Column(name = "round")
+    private int round;
+
+    @Transient
     private int[] sequence = new int[8];
+
+    @Column(name = "sequence", columnDefinition = "TEXT")
+    private String sequenceJson;
 
     @Transient
     private int[][] guesses = new int[12][];
 
     @Column(name = "guesses", columnDefinition = "TEXT")
     private String guessesJson;
+
+    @Transient
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    public GameInProgress(Long userId) {
+        this.userId = userId;
+    }
 
     public void addGuess(int round, int[] guess) {
         if (round < 0 || round >= guesses.length) {
@@ -64,7 +81,6 @@ public class GameInProgress {
     }
 
     private void parseGuessesJson() {
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
             guesses = objectMapper.readValue(guessesJson, int[][].class);
         } catch (JsonProcessingException e) {
@@ -73,17 +89,34 @@ public class GameInProgress {
         }
     }
 
+    private void parseSequenceJson(){
+        try {
+            sequence = objectMapper.readValue(sequenceJson, int[].class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     @PrePersist
-    public void onCreate() {
-        Random random = new Random();
-        for (int i = 0; i < sequence.length; i++) {
-            sequence[i] = random.nextInt(9) + 1;
+    public void onCreate(){
+        try {
+            Random random = new Random();
+            for (int i = 0; i < sequence.length; i++) {
+                sequence[i] = random.nextInt(9) + 1;
+                sequenceJson = objectMapper.writeValueAsString(sequence);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
         updateGuessesJson();
         startTime = LocalDateTime.now();
+        round = 0;
     }
     @PostLoad
     public void onLoad() {
         parseGuessesJson();
+        parseSequenceJson();
     }
 }
