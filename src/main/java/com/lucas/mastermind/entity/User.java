@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -45,7 +45,7 @@ public class User {
     private byte[] img;
 
     @Column(name = "avatar")
-    private int avatar;
+    private Long avatar;
 
     @Column(name = "registration_date", updatable = false)
     private LocalDateTime registrationDate;

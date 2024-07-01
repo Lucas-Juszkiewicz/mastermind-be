@@ -15,7 +15,7 @@ CREATE TABLE `users` (
   `games` BIGINT (20) DEFAULT NULL,
   `total` BIGINT (20) DEFAULT NULL,
   `img` TINYBLOB  DEFAULT NULL,
-  `avatar` int(3) DEFAULT NULL,
+  `avatar` BIGINT(20) DEFAULT NULL,
   `registration_date` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
