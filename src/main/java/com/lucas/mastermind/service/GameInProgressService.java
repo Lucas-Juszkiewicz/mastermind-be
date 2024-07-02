@@ -17,71 +17,86 @@ public class GameInProgressService {
     @Autowired
     GameInProgressRepository gipRepository;
 
-public GameInProgress saveGameInProgress(GameInProgress gameInProgress){
-    return gipRepository.save(gameInProgress);
-}
-
-
-public GameInProgressDTO getResponseAfterGuess(GameInProgressDTO gameInProgressDTO){
-    int[] guess = gameInProgressDTO.getGuess();
-    Long gameInProgressId = gameInProgressDTO.getId();
-
-    if(gipRepository.findById(gameInProgressId).isPresent()){
-        GameInProgress gameInProgress = gipRepository.findById(gameInProgressId).get();
-        int round = gameInProgress.getRound();
-        gameInProgress.addGuess(round, guess);
-        gameInProgress.setRound(round + 1);
-        gipRepository.save(gameInProgress);
+    public GameInProgress saveGameInProgress(GameInProgress gameInProgress) {
+        return gipRepository.save(gameInProgress);
     }
 
-    return checkSequence(guess, gameInProgressId);
-}
 
-private GameInProgressDTO checkSequence(int[] guess, Long gameInProgressId) {
-    if (gipRepository.findById(gameInProgressId).isPresent()) {
-        GameInProgress gameInProgress = gipRepository.findById(gameInProgressId).get();
-        int[] sequence = gameInProgress.getSequence();
-        int round = gameInProgress.getRound();
-        int[] response = new int[2];
-        int[] sequenceCount = new int[9];
-        int[] guessCount = new int[9];
-        int green = 0;
-        int commonCount = 0;
+    public GameInProgressDTO getResponseAfterGuess(GameInProgressDTO gameInProgressDTO) {
+        int[] guess = gameInProgressDTO.getGuess();
+        Long gameInProgressId = gameInProgressDTO.getId();
+        GameInProgressDTO responseAfterGuess = new GameInProgressDTO();
+        String finalMessage;
 
-        for (int i = 0; i < 8; i++) {
-            if (sequence[i] == guess[i]) {
-                green++;
+        //Round Update
+        if (gipRepository.findById(gameInProgressId).isPresent()) {
+            GameInProgress gameInProgress = gipRepository.findById(gameInProgressId).get();
+            int round = gameInProgress.getRound();
+            finalMessage = "Game is over.";
+            responseAfterGuess.setFinalMessage(finalMessage);
+            gameInProgress.addGuess(round, guess);
+            gameInProgress.setRound(round + 1);
+            gipRepository.save(gameInProgress);
+
+            responseAfterGuess = checkSequence(guess, gameInProgressId);
+            if (round + 1 == 12) {
+                int[] response = responseAfterGuess.getResponse();
+                if (response[0] == 8) {
+                    finalMessage = "win";
+                } else {
+                    finalMessage = "defeat";
+                }
+                responseAfterGuess.setFinalMessage(finalMessage);
             }
         }
+        return responseAfterGuess;
+    }
 
-        for(int i=0; i<9; i++){
-            int b= i+1;
-            int countSeq = (int) Arrays.stream(sequence).filter(a -> a == b).count();
-            sequenceCount[i] = countSeq;
+    private GameInProgressDTO checkSequence(int[] guess, Long gameInProgressId) {
+        if (gipRepository.findById(gameInProgressId).isPresent()) {
+            GameInProgress gameInProgress = gipRepository.findById(gameInProgressId).get();
+            int[] sequence = gameInProgress.getSequence();
+            int round = gameInProgress.getRound();
+            int[] response = new int[2];
+            int[] sequenceCount = new int[9];
+            int[] guessCount = new int[9];
+            int green = 0;
+            int commonCount = 0;
 
-            int countGuess = (int) Arrays.stream(guess).filter(a -> a == b).count();
-            guessCount[i] = countGuess;
-        }
-
-        for(int i=0; i<9; i++){
-            if(sequenceCount[i] == guessCount[i]){
-                commonCount = commonCount + sequenceCount[i];
-            }else {
-                if(sequenceCount[i] > guessCount[i]){
-                    commonCount = commonCount + guessCount[i];
+            for (int i = 0; i < 8; i++) {
+                if (sequence[i] == guess[i]) {
+                    green++;
                 }
-                if(sequenceCount[i] < guessCount[i]){
+            }
+
+            for (int i = 0; i < 9; i++) {
+                int b = i + 1;
+                int countSeq = (int) Arrays.stream(sequence).filter(a -> a == b).count();
+                sequenceCount[i] = countSeq;
+
+                int countGuess = (int) Arrays.stream(guess).filter(a -> a == b).count();
+                guessCount[i] = countGuess;
+            }
+
+            for (int i = 0; i < 9; i++) {
+                if (sequenceCount[i] == guessCount[i]) {
                     commonCount = commonCount + sequenceCount[i];
+                } else {
+                    if (sequenceCount[i] > guessCount[i]) {
+                        commonCount = commonCount + guessCount[i];
+                    }
+                    if (sequenceCount[i] < guessCount[i]) {
+                        commonCount = commonCount + sequenceCount[i];
+                    }
                 }
             }
-        }
 
-        int gray = commonCount - green;
-        response[0] = green;
-        response[1] = gray;
-        return new GameInProgressDTO(gameInProgressId, response, round);
-    }else{
-        throw new GameInProgressNotFoundException(gameInProgressId);
+            int gray = commonCount - green;
+            response[0] = green;
+            response[1] = gray;
+            return new GameInProgressDTO(gameInProgressId, response, round);
+        } else {
+            throw new GameInProgressNotFoundException(gameInProgressId);
+        }
     }
-}
 }
