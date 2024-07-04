@@ -48,6 +48,10 @@ public class GameInProgressService {
                 }
                 responseAfterGuess.setFinalMessage(finalMessage);
             }
+
+            responseAfterGuess.setPreviousGuesses(gameInProgress.getGuesses());
+
+            // I have to add 'previousResp' to the responseAfterGuess!!!!!!!!!!!!!
         }
         return responseAfterGuess;
     }
@@ -91,9 +95,9 @@ public class GameInProgressService {
                 }
             }
 
-            int gray = commonCount - green;
+            int yellow = commonCount - green;
             response[0] = green;
-            response[1] = gray;
+            response[1] = yellow;
             return new GameInProgressDTO(gameInProgressId, response, round);
         } else {
             throw new GameInProgressNotFoundException(gameInProgressId);

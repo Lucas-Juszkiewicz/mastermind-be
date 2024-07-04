@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 public class GameInProgressDTO {
 
     private Long id;
-    private int[] response;
-
     private int[] guess;
+
+    private int[] response;
+    private int[][] previousResponse;
+    private int[][] previousGuesses;
     private int round;
     private String finalMessage;
 
@@ -21,9 +23,11 @@ public class GameInProgressDTO {
         this.round = round;
     }
 
-    public GameInProgressDTO(Long id, int[] response, int round, String finalMessage) {
+    public GameInProgressDTO(Long id, int[] response, int[][] previousResponse, int[][] previousGuesses, int round, String finalMessage) {
         this.id = id;
         this.response = response;
+        this.previousResponse = previousResponse;
+        this.previousGuesses = previousGuesses;
         this.round = round;
         this.finalMessage = finalMessage;
     }

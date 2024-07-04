@@ -25,8 +25,8 @@ public class GameInProgressController {
         return new ResponseEntity<>(savedGameInProgress, HttpStatus.OK);
     }
 
-    @GetMapping("/check")
-    public ResponseEntity<GameInProgressDTO> getResponseAfterGuess(@RequestBody GameInProgressDTO gameInProgressDTO){
+    @PostMapping("/check")
+    public ResponseEntity<GameInProgressDTO> postResponseAfterGuess(@RequestBody GameInProgressDTO gameInProgressDTO){
         GameInProgressDTO responseAfterGuess = gipService.getResponseAfterGuess(gameInProgressDTO);
         return new ResponseEntity<>(responseAfterGuess, HttpStatus.OK);
     }
