@@ -49,9 +49,15 @@ public class GameInProgressService {
                 responseAfterGuess.setFinalMessage(finalMessage);
             }
 
-            responseAfterGuess.setPreviousGuesses(gameInProgress.getGuesses());
+            int[][] previousResponses = gameInProgress.getPreviousResponses();
+            previousResponses[round] = responseAfterGuess.getResponse();
 
-            // I have to add 'previousResp' to the responseAfterGuess!!!!!!!!!!!!!
+            gameInProgress.addSinglePreviousResponses(round, previousResponses);
+            gipRepository.save(gameInProgress);
+
+            GameInProgress gameInProgressUpdated = gipRepository.findById(gameInProgressId).get();
+            responseAfterGuess.setPreviousGuesses(gameInProgress.getGuesses());
+            responseAfterGuess.setPreviousResponses(gameInProgressUpdated.getPreviousResponses());
         }
         return responseAfterGuess;
     }

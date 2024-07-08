@@ -46,6 +46,12 @@ public class GameInProgress {
     private String guessesJson;
 
     @Transient
+    private int[][] previousResponses = new int[12][];
+
+    @Column(name = "responses", columnDefinition = "TEXT")
+    private String previousResponsesJson;
+
+    @Transient
     ObjectMapper objectMapper = new ObjectMapper();
 
     public GameInProgress(Long userId) {
@@ -59,8 +65,19 @@ public class GameInProgress {
         if (guess.length != 8) {
             throw new IllegalArgumentException("Guess must have a length of 8");
         }
-        guesses[round] = guess;
+        this.guesses[round] = guess;
         updateGuessesJson();
+    }
+
+    public void addSinglePreviousResponses(int round, int[][] previousResponses){
+        if (round < 0 || round >= previousResponses.length) {
+            throw new IllegalArgumentException("Round must be between 0 and 11");
+        }
+        if (previousResponses.length != 12) {
+            throw new IllegalArgumentException("Response must have a length of 12");
+        }
+        this.previousResponses[round] = previousResponses[round];
+        updatePreviousResponses();
     }
 
     public int[] getGuess(int round) {
@@ -71,12 +88,19 @@ public class GameInProgress {
     }
 
     private void updateGuessesJson() {
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
             guessesJson = objectMapper.writeValueAsString(guesses);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             // Handle the exception
+        }
+    }
+
+    private void updatePreviousResponses(){
+        try {
+            previousResponsesJson=objectMapper.writeValueAsString(previousResponses);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -97,6 +121,19 @@ public class GameInProgress {
         }
     }
 
+    private void parsePreviousResponsesJson() {
+        try {
+            if (previousResponsesJson != null && !previousResponsesJson.isEmpty()) {
+                previousResponses = objectMapper.readValue(previousResponsesJson, int[][].class);
+            } else {
+                previousResponses = new int[12][];
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            // Handle the exception
+        }
+    }
+
 
 
     @PrePersist
@@ -111,6 +148,7 @@ public class GameInProgress {
             throw new RuntimeException(e);
         }
         updateGuessesJson();
+        updatePreviousResponses();
         startTime = LocalDateTime.now();
         round = 0;
     }
@@ -118,5 +156,6 @@ public class GameInProgress {
     public void onLoad() {
         parseGuessesJson();
         parseSequenceJson();
+        parsePreviousResponsesJson();
     }
 }

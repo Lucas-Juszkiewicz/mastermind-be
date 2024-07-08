@@ -8,6 +8,7 @@ CREATE TABLE `game_in_progress` (
   `round` int(1),
   `sequence` TEXT NOT NULL,
   `guesses` TEXT,
+  `responses` TEXT,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_game_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

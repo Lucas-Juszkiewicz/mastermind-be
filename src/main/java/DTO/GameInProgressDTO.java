@@ -12,7 +12,7 @@ public class GameInProgressDTO {
     private int[] guess;
 
     private int[] response;
-    private int[][] previousResponse;
+    private int[][] previousResponses;
     private int[][] previousGuesses;
     private int round;
     private String finalMessage;
@@ -21,12 +21,18 @@ public class GameInProgressDTO {
         this.id = id;
         this.response = response;
         this.round = round;
+
     }
 
-    public GameInProgressDTO(Long id, int[] response, int[][] previousResponse, int[][] previousGuesses, int round, String finalMessage) {
+    public GameInProgressDTO(Long id, int[] guess) {
+        this.id = id;
+        this.guess = guess;
+    }
+
+    public GameInProgressDTO(Long id, int[] response, int[][] previousResponses, int[][] previousGuesses, int round, String finalMessage) {
         this.id = id;
         this.response = response;
-        this.previousResponse = previousResponse;
+        this.previousResponses = previousResponses;
         this.previousGuesses = previousGuesses;
         this.round = round;
         this.finalMessage = finalMessage;
