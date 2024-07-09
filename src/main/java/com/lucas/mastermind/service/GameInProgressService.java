@@ -39,15 +39,14 @@ public class GameInProgressService {
             gipRepository.save(gameInProgress);
 
             responseAfterGuess = checkSequence(guess, gameInProgressId);
-            if (round + 1 == 12) {
-                int[] response = responseAfterGuess.getResponse();
-                if (response[0] == 8) {
-                    finalMessage = "win";
-                } else {
-                    finalMessage = "defeat";
-                }
-                responseAfterGuess.setFinalMessage(finalMessage);
+            int[] response = responseAfterGuess.getResponse();
+            if (response[0] == 8) {
+                finalMessage = "win";
+            } else if (round + 1 == 12) {
+                finalMessage = "defeat";
             }
+            responseAfterGuess.setFinalMessage(finalMessage);
+
 
             int[][] previousResponses = gameInProgress.getPreviousResponses();
             previousResponses[round] = responseAfterGuess.getResponse();
