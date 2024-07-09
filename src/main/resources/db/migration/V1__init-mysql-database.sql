@@ -27,7 +27,7 @@ CREATE TABLE `games` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `duration` int(5) DEFAULT NULL,
   `attempts` int(2) DEFAULT NULL,
-  `sequence` varchar(40) DEFAULT NULL,
+  `sequence` TEXT DEFAULT NULL,
   `user` BIGINT(20) DEFAULT NULL,
   `date` datetime(6) DEFAULT NULL,
   `points` decimal (6,2) DEFAULT NULL,

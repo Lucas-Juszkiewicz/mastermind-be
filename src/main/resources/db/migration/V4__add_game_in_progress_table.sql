@@ -5,8 +5,10 @@ CREATE TABLE `game_in_progress` (
   `user_id` BIGINT(20) NOT NULL,
   `start_time` DATETIME(6) NOT NULL,
   `finish_time` DATETIME(6),
-  `sequence` VARBINARY(255) NOT NULL,
+  `round` int(1),
+  `sequence` TEXT NOT NULL,
   `guesses` TEXT,
+  `responses` TEXT,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_game_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
