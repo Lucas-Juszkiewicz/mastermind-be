@@ -1,13 +1,17 @@
 package com.lucas.mastermind.service;
 
 import DTO.GameInProgressDTO;
+import com.lucas.mastermind.entity.Game;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.exception.GameInProgressNotFoundException;
 import com.lucas.mastermind.repository.GameInProgressRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -16,6 +20,9 @@ import java.util.HashSet;
 public class GameInProgressService {
     @Autowired
     GameInProgressRepository gipRepository;
+
+    @Autowired
+    GameService gameService;
 
     public GameInProgress saveGameInProgress(GameInProgress gameInProgress) {
         return gipRepository.save(gameInProgress);
@@ -59,6 +66,30 @@ public class GameInProgressService {
             responseAfterGuess.setPreviousResponses(gameInProgressUpdated.getPreviousResponses());
         }
         return responseAfterGuess;
+    }
+
+    public Game finishZero(Long id) {
+        GameInProgress gameInProgress = gipRepository.findById(id).get();
+        long userId = gameInProgress.getUserId();
+        LocalDateTime startTime = gameInProgress.getStartTime();
+        int round = gameInProgress.getRound();
+        int[] sequence = gameInProgress.getSequence();
+        int[][] guesses = gameInProgress.getGuesses();
+        int[][] responses = gameInProgress.getPreviousResponses();
+
+
+        Game game = new Game(id, startTime, round, sequence, guesses, responses);
+        return gameService.saveGame(game, userId);
+    }
+
+    public ResponseEntity<HttpStatus> deleteGameInProgress(Long gameId){
+        try {
+            gipRepository.deleteById(gameId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private GameInProgressDTO checkSequence(int[] guess, Long gameInProgressId) {

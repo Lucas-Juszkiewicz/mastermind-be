@@ -12,27 +12,29 @@ CREATE TABLE `users` (
   `email` varchar(45) DEFAULT NULL,
   `country` varchar(45) DEFAULT NULL,
   `password` varchar(225) DEFAULT NULL,
-  `games` BIGINT (20) DEFAULT NULL,
   `total` BIGINT (20) DEFAULT NULL,
   `img` TINYBLOB  DEFAULT NULL,
   `avatar` BIGINT(20) DEFAULT NULL,
   `registration_date` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1;
 
 
 DROP TABLE IF EXISTS `games`;
 
 CREATE TABLE `games` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `duration` int(5) DEFAULT NULL,
+  `id` BIGINT(20) NOT NULL,
+  `duration` BIGINT(5) DEFAULT NULL,
   `attempts` int(2) DEFAULT NULL,
   `sequence` TEXT DEFAULT NULL,
-  `user` BIGINT(20) DEFAULT NULL,
+  `user_id` BIGINT(20) DEFAULT NULL,
   `date` datetime(6) DEFAULT NULL,
-  `points` decimal (6,2) DEFAULT NULL,
+  `points` DECIMAL (6,2) DEFAULT NULL,
+  `is_success` BOOLEAN DEFAULT FALSE,
+  `guesses` TEXT,
+  `responses` TEXT,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1;
 
 
 DROP TABLE IF EXISTS `avatars`;
@@ -41,7 +43,7 @@ CREATE TABLE `avatars` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `avatar_name` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4PRIMARY;
+) ENGINE=InnoDB AUTO_INCREMENT=1;
 
 
 

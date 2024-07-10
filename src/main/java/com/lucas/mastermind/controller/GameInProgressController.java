@@ -1,8 +1,10 @@
 package com.lucas.mastermind.controller;
 
 import DTO.GameInProgressDTO;
+import com.lucas.mastermind.entity.Game;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.service.GameInProgressService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,5 +31,13 @@ public class GameInProgressController {
     public ResponseEntity<GameInProgressDTO> postResponseAfterGuess(@RequestBody GameInProgressDTO gameInProgressDTO){
         GameInProgressDTO responseAfterGuess = gipService.getResponseAfterGuess(gameInProgressDTO);
         return new ResponseEntity<>(responseAfterGuess, HttpStatus.OK);
+    }
+
+    @Transactional
+    @GetMapping("/finishzero/{gameId}")
+    public ResponseEntity<Game> getFinishZero(@PathVariable Long id){
+        Game finishZeroResponse = gipService.finishZero(id);
+        gipService.deleteGameInProgress(id);
+        return new ResponseEntity<>(finishZeroResponse, HttpStatus.OK);
     }
 }

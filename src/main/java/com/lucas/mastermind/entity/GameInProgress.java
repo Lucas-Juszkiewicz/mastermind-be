@@ -27,9 +27,6 @@ public class GameInProgress {
     @Column(name = "start_time", updatable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "finish_time", updatable = false)
-    private LocalDateTime finishTime;
-
     @Column(name = "round")
     private int round;
 
