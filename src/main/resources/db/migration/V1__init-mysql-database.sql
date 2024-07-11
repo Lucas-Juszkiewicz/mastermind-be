@@ -23,7 +23,7 @@ CREATE TABLE `users` (
 DROP TABLE IF EXISTS `games`;
 
 CREATE TABLE `games` (
-  `id` BIGINT(20) NOT NULL,
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `duration` BIGINT(5) DEFAULT NULL,
   `attempts` int(2) DEFAULT NULL,
   `sequence` TEXT DEFAULT NULL,

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/gameinprogress")
@@ -35,9 +37,13 @@ public class GameInProgressController {
 
     @Transactional
     @GetMapping("/finishzero/{gameId}")
-    public ResponseEntity<Game> getFinishZero(@PathVariable Long id){
-        Game finishZeroResponse = gipService.finishZero(id);
-        gipService.deleteGameInProgress(id);
-        return new ResponseEntity<>(finishZeroResponse, HttpStatus.OK);
+    public ResponseEntity<Game> getFinishZero(@PathVariable Long gameId){
+            Game finishZeroResponse = gipService.finishZero(gameId);
+            gipService.deleteGameInProgress(gameId);
+        if (finishZeroResponse.getStartTime().isBefore(LocalDateTime.now()) && finishZeroResponse.getDuration()>0) {
+            return new ResponseEntity<>(finishZeroResponse, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 }

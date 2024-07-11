@@ -9,5 +9,5 @@ CREATE TABLE `game_in_progress` (
   `guesses` TEXT,
   `responses` TEXT,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_game_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_game_in_progress_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB;

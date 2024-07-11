@@ -1,5 +1,7 @@
 package com.lucas.mastermind.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
@@ -19,6 +21,7 @@ import java.util.Arrays;
 public class Game {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id;
 
@@ -71,11 +74,11 @@ public class Game {
     @Column(name = "responses", columnDefinition = "TEXT")
     private String responsesJson;
 
+    @JsonIgnore
     @Transient
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public Game(Long id, LocalDateTime startTime, int round, int[] sequence, int[][] guesses, int[][] responses) {
-        this.id = id;
+    public Game(LocalDateTime startTime, int round, int[] sequence, int[][] guesses, int[][] responses) {
         this.startTime = startTime;
         this.round = round;
         this.sequence = sequence;
@@ -121,10 +124,15 @@ public class Game {
             responsesJson=objectMapper.writeValueAsString(responses);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            System.out.println("Game - error in JSON conversion");
         }
         finishTime = LocalDateTime.now();
         date=LocalDateTime.now();
-        duration = Duration.between(startTime, finishTime).getSeconds();
+        if (startTime != null) {
+            duration = Duration.between(startTime, finishTime).getSeconds();
+        } else {
+            duration = 0;
+        }
         attempts = round;
         pointsCalculation();
         isSuccessCheck();
@@ -132,12 +140,22 @@ public class Game {
 
     private void pointsCalculation(){
         long time = 1200-duration;
-        points = time / attempts;
+        if (attempts != 0) {
+            points = (double) time / attempts;
+        } else {
+            points=time;
+        }
     }
 
     private void isSuccessCheck(){
         if(duration<1200){
-            String lastGuess = Arrays.toString(guesses[round - 1]);
+            int x;
+            if(round == 0){
+               x = 0;
+            }else{
+                x=1;
+            }
+            String lastGuess = Arrays.toString(guesses[round - x]);
             String sequenceString = Arrays.toString(sequence);
             isSuccess=lastGuess.equals(sequenceString);
         }

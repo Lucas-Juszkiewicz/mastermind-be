@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GameRepository extends CrudRepository<Game, Long> {
+    @Override
+    Game save(Game game);
 }
