@@ -68,36 +68,6 @@ public class GameInProgressService {
         return responseAfterGuess;
     }
 
-    public Game finishZero(Long id) {
-        try {
-            if (gipRepository.findById(id).isPresent()) {
-               GameInProgress gameInProgress = gipRepository.findById(id).get();
-
-                // Log startTime and other fields for debugging
-                System.out.println("Fetched Start Time: " + gameInProgress.getStartTime());
-                System.out.println("Fetched Sequence JSON: " + gameInProgress.getSequenceJson());
-                System.out.println("Fetched Guesses JSON: " + gameInProgress.getGuessesJson());
-                System.out.println("Fetched Responses JSON: " + gameInProgress.getPreviousResponsesJson());
-
-            long userId = gameInProgress.getUserId();
-            LocalDateTime startTime = gameInProgress.getStartTime();
-            int round = gameInProgress.getRound();
-            int[] sequence = gameInProgress.getSequence();
-            int[][] guesses = gameInProgress.getGuesses();
-            int[][] responses = gameInProgress.getPreviousResponses();
-                System.out.println(startTime);
-                System.out.println(Arrays.toString(sequence));
-                System.out.println(Arrays.deepToString(guesses));
-                System.out.println(round);
-
-            Game game = new Game(startTime, round, sequence, guesses, responses);
-            return gameService.saveGame(game, userId);
-        }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
 
     public ResponseEntity<HttpStatus> deleteGameInProgress(Long gameId){
         try {

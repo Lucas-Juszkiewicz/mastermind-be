@@ -35,15 +35,4 @@ public class GameInProgressController {
         return new ResponseEntity<>(responseAfterGuess, HttpStatus.OK);
     }
 
-    @Transactional
-    @GetMapping("/finishzero/{gameId}")
-    public ResponseEntity<Game> getFinishZero(@PathVariable Long gameId){
-            Game finishZeroResponse = gipService.finishZero(gameId);
-            gipService.deleteGameInProgress(gameId);
-        if (finishZeroResponse.getStartTime().isBefore(LocalDateTime.now()) && finishZeroResponse.getDuration()>0) {
-            return new ResponseEntity<>(finishZeroResponse, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-    }
 }

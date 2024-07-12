@@ -144,6 +144,7 @@ public class Game {
             points = (double) time / attempts;
         } else {
             points=time;
+            System.out.println("Points in Game: " + points);
         }
     }
 
