@@ -139,12 +139,13 @@ public class Game {
     }
 
     private void pointsCalculation(){
-        long time = 1200-duration;
-        if (attempts != 0) {
-            points = (double) time / attempts;
+        if (isSuccess) {
+            long timeLeft = 1200-duration;
+            if (attempts != 0) {
+                points = (double) timeLeft / attempts;
+            }else points = timeLeft;
         } else {
-            points=time;
-            System.out.println("Points in Game: " + points);
+            points=0;
         }
     }
 
