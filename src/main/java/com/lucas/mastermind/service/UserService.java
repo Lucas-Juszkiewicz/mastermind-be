@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +20,13 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public User saveUser(User user){
         try {
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
             return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             if (e.getCause() instanceof ConstraintViolationException) {
@@ -55,11 +60,13 @@ public class UserService {
 
     public User updateUser(Long userId, User userWithUpdate) {
         try {
+            String encodedPassword = passwordEncoder.encode(userWithUpdate.getPassword());
+
             Optional<User> userUpdatedAndSaved = userRepository.findById(userId).map(user -> {
                 user.setNick(userWithUpdate.getNick());
                 user.setEmail(userWithUpdate.getEmail());
                 user.setCountry(userWithUpdate.getCountry());
-                user.setPassword(userWithUpdate.getPassword());
+                user.setPassword(encodedPassword);
                 user.setGames(userWithUpdate.getGames());
                 user.setTotal(userWithUpdate.getTotal());
                 user.setImg(userWithUpdate.getImg());

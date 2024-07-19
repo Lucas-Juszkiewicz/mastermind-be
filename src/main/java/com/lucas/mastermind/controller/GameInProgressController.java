@@ -26,7 +26,12 @@ public class GameInProgressController {
     public ResponseEntity<GameInProgress> getSequenceAndStart(@PathVariable Long userId){
         GameInProgress gameInProgress = new GameInProgress(userId);
         GameInProgress savedGameInProgress = gipService.saveGameInProgress(gameInProgress);
-        return new ResponseEntity<>(savedGameInProgress, HttpStatus.OK);
+        if(savedGameInProgress != null){
+            return new ResponseEntity<>(savedGameInProgress, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
     }
 
     @PostMapping("/check")

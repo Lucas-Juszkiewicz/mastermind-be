@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -25,7 +26,28 @@ public class GameInProgressService {
     GameService gameService;
 
     public GameInProgress saveGameInProgress(GameInProgress gameInProgress) {
+        try {
+            Long userId = gameInProgress.getUserId();
+            deleteByUserId(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
         return gipRepository.save(gameInProgress);
+    }
+
+    public GameInProgress findGamesInProgressByUserId(Long userId){
+        return gipRepository.findByUserId(userId);
+    }
+
+    public ResponseEntity<HttpStatus> deleteByUserId(Long userId){
+        try {
+            gipRepository.deleteByUserId(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
