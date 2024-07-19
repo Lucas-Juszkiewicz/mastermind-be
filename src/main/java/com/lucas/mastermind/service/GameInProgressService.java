@@ -1,7 +1,6 @@
 package com.lucas.mastermind.service;
 
-import DTO.GameInProgressDTO;
-import com.lucas.mastermind.entity.Game;
+import com.lucas.mastermind.DTO.GameInProgressDTO;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.exception.GameInProgressNotFoundException;
 import com.lucas.mastermind.repository.GameInProgressRepository;
@@ -11,10 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 @AllArgsConstructor
 @Service

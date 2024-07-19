@@ -1,17 +1,13 @@
 package com.lucas.mastermind.controller;
 
-import DTO.GameInProgressDTO;
-import com.lucas.mastermind.entity.Game;
+import com.lucas.mastermind.DTO.GameInProgressDTO;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.service.GameInProgressService;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @RestController

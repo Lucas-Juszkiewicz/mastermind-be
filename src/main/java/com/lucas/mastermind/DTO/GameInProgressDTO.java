@@ -1,4 +1,4 @@
-package DTO;
+package com.lucas.mastermind.DTO;
 
 
 import lombok.Data;
