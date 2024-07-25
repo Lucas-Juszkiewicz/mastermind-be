@@ -23,7 +23,7 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public User saveUser(User user){
+    public User saveUser(User user) {
         try {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPassword);
@@ -45,16 +45,16 @@ public class UserService {
         }
     }
 
-    public User getUserById(Long userId){
+    public User getUserById(Long userId) {
         Optional<User> userById = userRepository.findById(userId);
         return unwrapUser(userById, userId);
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public void deleteUser(Long userId){
+    public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
     }
 
@@ -88,8 +88,49 @@ public class UserService {
         }
     }
 
-    static User unwrapUser(Optional<User> user, Long userId){
-        if(user.isPresent()) return user.get();
+    public User getUserDetailsByNick(String nick) {
+        if (userRepository.findByNick(nick).isPresent()) {
+            return userRepository.findByNick(nick).get();
+        }
+        return null;
+    }
+
+    public User getUserDetailsByNick(String nick, String password){
+
+        String[] passwordParts = password.split("=");
+        String actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
+        System.out.println("######################" + nick + " Pass: " + actualPassword);
+
+        if(userRepository.findByNick(nick).isPresent()){
+            User user = userRepository.findByNick(nick).get();
+            if(passwordEncoder.matches(actualPassword, user.getPassword())){
+                System.out.println("Is it equal? :" +passwordEncoder.matches(actualPassword, user.getPassword()));
+                return user;
+            }
+
+        }
+        return null;
+    }
+
+    public User getUserDetailsByEmail(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            return userRepository.findByEmail(email).get();
+        }
+        return null;
+    }
+
+    public User getUserDetailsByEmail(String email, String password){
+        if(userRepository.findByEmail(email).isPresent()){
+            User user = userRepository.findByEmail(email).get();
+            if(passwordEncoder.matches(password, user.getPassword())){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    static User unwrapUser(Optional<User> user, Long userId) {
+        if (user.isPresent()) return user.get();
         else throw new UserNotFoundException(userId);
     }
 }

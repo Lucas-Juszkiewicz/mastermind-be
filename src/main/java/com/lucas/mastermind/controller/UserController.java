@@ -1,10 +1,13 @@
 package com.lucas.mastermind.controller;
 
+import com.lucas.mastermind.DTO.UserAuth;
 import com.lucas.mastermind.DTO.UserDTO;
 import com.lucas.mastermind.entity.User;
 import com.lucas.mastermind.service.GameInProgressService;
 import com.lucas.mastermind.service.UserService;
+import com.lucas.mastermind.util.UserAuthMapper;
 import com.lucas.mastermind.util.UserMapper;
+import com.lucas.mastermind.util.VerifyPasswordResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -30,6 +33,9 @@ public class UserController {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    UserAuthMapper userAuthMapper;
 
     @PostMapping("/save")
     public ResponseEntity<UserDTO> saveUser(@Valid @RequestBody User user) {
@@ -80,6 +86,43 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+//    @GetMapping("/{userEmail}")
+//    public UserAuth getUserByEmail(@PathVariable String email){
+//        return userAuthMapper.toUserAuth(userService.getUserDetailsByEmail(email));
+//    }
 
 
+//    @PostMapping("/{userEmail}/verify-password")
+//    VerifyPasswordResponse verifyUserPassword(@PathVariable String email, @RequestBody String password){
+//        VerifyPasswordResponse returnValue = new VerifyPasswordResponse(false);
+//
+//        User userDetailsByEmail = userService.getUserDetailsByEmail(email, password);
+//        if(userDetailsByEmail != null){
+//            returnValue.setResult(true);
+//        }
+//        return returnValue;
+//    }
+
+
+@GetMapping("/{username}")
+public UserAuth getUserByNick(@PathVariable("username") String username){
+    UserAuth userAuth = userAuthMapper.toUserAuth(userService.getUserDetailsByNick(username));
+    System.out.println("Username to find by: " + username);
+    System.out.println("User to convert: " + userService.getUserDetailsByNick(username));
+    System.out.println("User from 8081: " + userAuth);
+        return userAuth;
+}
+
+
+@PostMapping("/{username}/verify-password")
+VerifyPasswordResponse verifyUserPassword(@PathVariable("username") String username, @RequestBody String password){
+        VerifyPasswordResponse returnValue = new VerifyPasswordResponse(false);
+
+    User userDetailsByNick = userService.getUserDetailsByNick(username, password);
+    if(userDetailsByNick != null){
+        returnValue.setResult(true);
+    }
+    System.out.println("UserDetailsByNick: " + userDetailsByNick);
+    return returnValue;
+}
 }

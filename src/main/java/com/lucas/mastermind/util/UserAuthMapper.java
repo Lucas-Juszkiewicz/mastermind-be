@@ -1,20 +1,20 @@
 package com.lucas.mastermind.util;
 
-import com.lucas.mastermind.DTO.UserDTO;
+import com.lucas.mastermind.DTO.UserAuth;
 import com.lucas.mastermind.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserMapper {
+public class UserAuthMapper {
 
-    public UserDTO toUserDTO(User user) {
+    public UserAuth toUserAuth(User user) {
         if (user == null) {
             return null;
         }
-        return new UserDTO(
-                user.getId(),
+        return new UserAuth(
+                user.getEmail(),
                 user.getNick(),
-                user.getEmail()
+                user.getId().toString()
         );
     }
 }

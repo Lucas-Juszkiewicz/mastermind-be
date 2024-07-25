@@ -28,6 +28,12 @@ public class UserDTO {
 
     private LocalDateTime registrationDate;
 
+    public UserDTO(Long id, String nick, String email) {
+        this.id = id;
+        this.nick = nick;
+        this.email = email;
+    }
+
     public UserDTO(Long id, String nick, String email, String country, Long total, byte[] img, Long avatar, LocalDateTime registrationDate) {
         this.id = id;
         this.nick = nick;
