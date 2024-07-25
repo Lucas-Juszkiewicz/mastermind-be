@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,13 +38,15 @@ public class UserController {
     @Autowired
     UserAuthMapper userAuthMapper;
 
+//    @PostMapping(value = "/save", produces = "application/json")
     @PostMapping("/save")
+    @PreAuthorize("permitAll")
     public ResponseEntity<UserDTO> saveUser(@Valid @RequestBody User user) {
 
         User savedUser = userService.saveUser(user);
 
         UserDTO userDTO = userMapper.toUserDTO(savedUser);
-
+        System.out.println(userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 

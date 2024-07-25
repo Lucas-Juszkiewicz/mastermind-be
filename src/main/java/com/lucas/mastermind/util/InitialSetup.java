@@ -18,12 +18,12 @@ public class InitialSetup {
     PasswordEncoder passwordEncoder;
 
 
-    @EventListener
-    @Transactional
-    public void onApplicationEvent(ApplicationReadyEvent event) {
-        User user = new User("user18", "user18@example.com", "user18");
-//        String encodedPassword = passwordEncoder.encode(user.getPassword());
-//        user.setPassword(encodedPassword);
-        userService.saveUser(user);
-    }
+//    @EventListener
+//    @Transactional
+//    public void onApplicationEvent(ApplicationReadyEvent event) {
+//        User user = new User("user18", "user18@example.com", "user18");
+////        String encodedPassword = passwordEncoder.encode(user.getPassword());
+////        user.setPassword(encodedPassword);
+//        userService.saveUser(user);
+//    }
 }

@@ -14,7 +14,12 @@ public class UserMapper {
         return new UserDTO(
                 user.getId(),
                 user.getNick(),
-                user.getEmail()
+                user.getEmail(),
+                user.getCountry(),
+                user.getTotal(),
+                user.getImg(),
+                user.getAvatar(),
+                user.getRegistrationDate()
         );
     }
 }
