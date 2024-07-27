@@ -12,7 +12,7 @@ public class UserAuth {
     public UserAuth(String email, String userNick, String userId) {
         this.email = email;
         this.username = userNick;
-        this.userId = userNick;
+        this.userId = userId;
     }
 
     public String getFirstName() {
