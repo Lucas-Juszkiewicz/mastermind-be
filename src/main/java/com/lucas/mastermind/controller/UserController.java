@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
 public class UserController {
 
     @Autowired

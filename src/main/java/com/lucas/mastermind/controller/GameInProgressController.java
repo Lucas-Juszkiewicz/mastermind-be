@@ -38,9 +38,10 @@ public class GameInProgressController {
 
     @GetMapping("/start")
     public ResponseEntity<GameInProgress> getSequenceAndStart(@AuthenticationPrincipal OidcUser principal ){
-        String nickName = principal.getNickName();
+        String nickName = principal.getClaimAsString("name");
         Long userId = userService.getUserDetailsByNick(nickName).getId();
         System.out.println(userId);
+        System.out.println(nickName);
         GameInProgress gameInProgress = new GameInProgress(userId);
         GameInProgress savedGameInProgress = gipService.saveGameInProgress(gameInProgress);
         if(savedGameInProgress != null){
