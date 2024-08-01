@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
+@CrossOrigin("http://localhost:3000")
 public class UserController {
 
     @Autowired
@@ -40,7 +40,6 @@ public class UserController {
 
 //    @PostMapping(value = "/save", produces = "application/json")
     @PostMapping("/save")
-    @PreAuthorize("permitAll")
     public ResponseEntity<UserDTO> saveUser(@Valid @RequestBody User user) {
 
         User savedUser = userService.saveUser(user);
@@ -57,7 +56,6 @@ public class UserController {
         UserDTO userDTO = userMapper.toUserDTO(updatedUser);
 
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
-
 
     }
 

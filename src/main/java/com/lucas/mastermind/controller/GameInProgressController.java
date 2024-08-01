@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/gameinprogress")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("http://localhost:3000")
 public class GameInProgressController {
 
     @Autowired
@@ -37,8 +37,8 @@ public class GameInProgressController {
 //    }
 
     @GetMapping("/start")
-    public ResponseEntity<GameInProgress> getSequenceAndStart(@AuthenticationPrincipal OidcUser principal ){
-        String nickName = principal.getClaimAsString("name");
+    public ResponseEntity<GameInProgress> getSequenceAndStart(@AuthenticationPrincipal Jwt jwt){
+        String nickName = jwt.getClaim("name");
         Long userId = userService.getUserDetailsByNick(nickName).getId();
         System.out.println(userId);
         System.out.println(nickName);
