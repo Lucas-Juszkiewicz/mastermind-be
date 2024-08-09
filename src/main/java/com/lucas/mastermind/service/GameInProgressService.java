@@ -1,7 +1,6 @@
 package com.lucas.mastermind.service;
 
-import DTO.GameInProgressDTO;
-import com.lucas.mastermind.entity.Game;
+import com.lucas.mastermind.DTO.GameInProgressDTO;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.exception.GameInProgressNotFoundException;
 import com.lucas.mastermind.repository.GameInProgressRepository;
@@ -11,9 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashSet;
 
 @AllArgsConstructor
 @Service
@@ -25,7 +22,28 @@ public class GameInProgressService {
     GameService gameService;
 
     public GameInProgress saveGameInProgress(GameInProgress gameInProgress) {
+        try {
+            Long userId = gameInProgress.getUserId();
+            deleteByUserId(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
         return gipRepository.save(gameInProgress);
+    }
+
+    public GameInProgress findGamesInProgressByUserId(Long userId){
+        return gipRepository.findByUserId(userId);
+    }
+
+    public ResponseEntity<HttpStatus> deleteByUserId(Long userId){
+        try {
+            gipRepository.deleteByUserId(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

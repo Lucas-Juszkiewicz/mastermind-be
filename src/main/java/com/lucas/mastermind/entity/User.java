@@ -15,6 +15,21 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 public class User {
+    public User() {
+    }
+
+    public User(String nick, String email, String password) {
+        this.nick = nick;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User(Long id, String nick, String email, String password) {
+        this.id = id;
+        this.nick = nick;
+        this.email = email;
+        this.password = password;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
