@@ -1,18 +1,21 @@
 package com.lucas.mastermind.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Data
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
@@ -34,9 +37,6 @@ public class User {
     @NotBlank(message = "You have to provide your Password!")
     private String password;
 
-    @Column(name = "games")
-    private Long games;
-
     @Column(name = "total")
     private Long total;
 
@@ -49,6 +49,10 @@ public class User {
 
     @Column(name = "registration_date", updatable = false)
     private LocalDateTime registrationDate;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private Set<Game> games;
 
     @PrePersist
     protected void onCreate() {

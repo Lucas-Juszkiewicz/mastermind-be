@@ -3,9 +3,7 @@ package com.lucas.mastermind.entity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -27,9 +25,6 @@ public class GameInProgress {
     @Column(name = "start_time", updatable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "finish_time", updatable = false)
-    private LocalDateTime finishTime;
-
     @Column(name = "round")
     private int round;
 
@@ -50,6 +45,7 @@ public class GameInProgress {
 
     @Column(name = "responses", columnDefinition = "TEXT")
     private String previousResponsesJson;
+
 
     @Transient
     ObjectMapper objectMapper = new ObjectMapper();
