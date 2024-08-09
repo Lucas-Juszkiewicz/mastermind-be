@@ -25,10 +25,10 @@ public class GameController {
     @Transactional
     @GetMapping("/finishvictory/{gameId}")
     public ResponseEntity<Game> getFinishVictory(@PathVariable Long gameId){
-        Game finishZeroResponse = gameService.finish(gameId);
+        Game finishVictoryResponse = gameService.finish(gameId);
         gipService.deleteGameInProgress(gameId);
-        if (finishZeroResponse.getStartTime().isBefore(LocalDateTime.now()) && finishZeroResponse.getDuration()>0) {
-            return new ResponseEntity<>(finishZeroResponse, HttpStatus.OK);
+        if (finishVictoryResponse.getStartTime().isBefore(LocalDateTime.now()) && finishVictoryResponse.getDuration()>0) {
+            return new ResponseEntity<>(finishVictoryResponse, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }

@@ -38,7 +38,7 @@ public class GameInProgressController {
 
     @GetMapping("/start")
     public ResponseEntity<GameInProgress> getSequenceAndStart(@AuthenticationPrincipal Jwt jwt){
-        String nickName = jwt.getClaim("name");
+        String nickName = jwt.getClaim("preferred_username");
         Long userId = userService.getUserDetailsByNick(nickName).getId();
         System.out.println(userId);
         System.out.println(nickName);
