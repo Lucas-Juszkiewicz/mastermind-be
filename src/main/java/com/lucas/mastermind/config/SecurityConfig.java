@@ -54,6 +54,13 @@ public class SecurityConfig{
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/users/save").permitAll()
+                        .requestMatchers("/users/*/verify-password").permitAll()
+                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/users/get/**").authenticated() // Secure GET by user ID
+                        .requestMatchers("/users/getAll").authenticated() // Secure GET all users
+                        .requestMatchers("/users/delete/**").authenticated()
+                        .requestMatchers("/users/update/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
