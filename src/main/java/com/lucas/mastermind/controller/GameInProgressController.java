@@ -4,6 +4,7 @@ import com.lucas.mastermind.DTO.GameInProgressDTO;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.service.GameInProgressService;
 import com.lucas.mastermind.service.UserService;
+import com.lucas.mastermind.util.GameInProgressMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,9 @@ public class GameInProgressController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    GameInProgressMapper gipMapper;
 
 //    @GetMapping("/start/{userId}")
 //    public ResponseEntity<GameInProgress> getSequenceAndStart(@PathVariable Long userId){
@@ -56,6 +60,20 @@ public class GameInProgressController {
     public ResponseEntity<GameInProgressDTO> postResponseAfterGuess(@RequestBody GameInProgressDTO gameInProgressDTO){
         GameInProgressDTO responseAfterGuess = gipService.getResponseAfterGuess(gameInProgressDTO);
         return new ResponseEntity<>(responseAfterGuess, HttpStatus.OK);
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<GameInProgressDTO> getGameAfterRecall(@AuthenticationPrincipal Jwt jwt){
+        String nickName = jwt.getClaim("preferred_username");
+        Long userId = userService.getUserDetailsByNick(nickName).getId();
+        GameInProgress gameInProgress = gipService.findGamesInProgressByUserId(userId);
+        GameInProgressDTO gameInProgressDTO = gipMapper.toGameInProgressDTO(gameInProgress);
+        if(gameInProgressDTO != null){
+            return new ResponseEntity<>(gameInProgressDTO, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
     }
 
 }
