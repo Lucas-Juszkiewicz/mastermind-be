@@ -1,5 +1,6 @@
 package com.lucas.mastermind.controller;
 
+import com.lucas.mastermind.DTO.CheckIfExistsDTO;
 import com.lucas.mastermind.DTO.GameInProgressDTO;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.service.GameInProgressService;
@@ -73,6 +74,21 @@ public class GameInProgressController {
         }else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
+    }
+
+    @GetMapping("/checkifexists")
+    public ResponseEntity<CheckIfExistsDTO> checkIfGameInProgressExists(@AuthenticationPrincipal Jwt jwt){
+        String nickName = jwt.getClaim("preferred_username");
+        Long userId = userService.getUserDetailsByNick(nickName).getId();
+        GameInProgress gameInProgress = gipService.findGamesInProgressByUserId(userId);
+        CheckIfExistsDTO checkIfExists;
+        if(gameInProgress != null){
+            checkIfExists = new CheckIfExistsDTO(true);
+        }else {
+            checkIfExists = new CheckIfExistsDTO(false);
+        }
+        return new ResponseEntity<>(checkIfExists, HttpStatus.OK);
 
     }
 
