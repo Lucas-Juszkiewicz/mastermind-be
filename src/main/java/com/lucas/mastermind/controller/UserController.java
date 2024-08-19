@@ -10,11 +10,9 @@ import com.lucas.mastermind.util.UserMapper;
 import com.lucas.mastermind.util.VerifyPasswordResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -107,11 +105,23 @@ public class UserController {
 
 @GetMapping("/{username}")
 public UserAuth getUserByNick(@PathVariable("username") String username){
-    UserAuth userAuth = userAuthMapper.toUserAuth(userService.getUserDetailsByNick(username));
-    System.out.println("Username to find by: " + username);
-    System.out.println("User to convert: " + userService.getUserDetailsByNick(username));
-    System.out.println("User from 8081: " + userAuth);
-        return userAuth;
+    UserAuth userAuthByNick = userAuthMapper.toUserAuth(userService.getUserDetailsByNick(username));
+    UserAuth userAuthByEmail = userAuthMapper.toUserAuth(userService.getUserDetailsByEmail(username));
+
+    if(userAuthByNick != null){
+        System.out.println("Username to find by: " + username);
+        System.out.println("User to convert: " + userService.getUserDetailsByNick(username));
+        System.out.println("User from 8081: " + userAuthByNick);
+        return userAuthByNick;
+    }else if(userAuthByEmail != null){
+        System.out.println("Username to find by: " + username);
+        System.out.println("User to convert: " + userService.getUserDetailsByEmail(username));
+        System.out.println("User from 8081: " + userAuthByEmail);
+        return userAuthByEmail;
+    }
+
+
+        return null;
 }
 
 
@@ -120,10 +130,14 @@ VerifyPasswordResponse verifyUserPassword(@PathVariable("username") String usern
         VerifyPasswordResponse returnValue = new VerifyPasswordResponse(false);
 
     User userDetailsByNick = userService.getUserDetailsByNick(username, password);
+    User userDetailsByEmail = userService.getUserDetailsByEmail(username, password);
     if(userDetailsByNick != null){
         returnValue.setResult(true);
+    }else if(userDetailsByEmail != null){
+        returnValue.setResult(true);
     }
-    System.out.println("UserDetailsByNick: " + userDetailsByNick);
+
+    System.out.println("UserDetailsByNickOrEmail: " + userDetailsByNick);
     return returnValue;
 }
 }

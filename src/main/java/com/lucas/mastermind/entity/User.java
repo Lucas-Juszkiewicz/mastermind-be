@@ -1,7 +1,6 @@
 package com.lucas.mastermind.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,6 +41,7 @@ public class User {
     private String nick;
 
     @Column(name = "email", unique = true)
+    @NotBlank(message = "You have to provide your Email!")
     @Email
     private String email;
 

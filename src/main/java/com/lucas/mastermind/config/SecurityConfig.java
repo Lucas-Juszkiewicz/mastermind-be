@@ -25,6 +25,8 @@ import java.util.Base64;
 @EnableWebSecurity
 public class SecurityConfig{
 
+
+
     private PublicKey getPublicKeyFromString(String key) throws Exception {
         // Remove the first and last lines (the BEGIN/END lines)
         String publicKeyPEM = key.replace("-----BEGIN PUBLIC KEY-----", "")
@@ -56,6 +58,7 @@ public class SecurityConfig{
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/users/save").permitAll()
                         .requestMatchers("/users/*/verify-password").permitAll()
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/users/**").permitAll()
                         .requestMatchers("/users/get/**").authenticated() // Secure GET by user ID
                         .requestMatchers("/users/getAll").authenticated() // Secure GET all users
