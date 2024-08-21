@@ -1,7 +1,6 @@
 package com.lucas.mastermind.repository;
 
 import com.lucas.mastermind.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +15,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByNick(String nick);
+
+    boolean existsByEmail(String email);
+    boolean existsByNick(String nick);
 }

@@ -59,6 +59,7 @@ public class SecurityConfig{
                         .requestMatchers("/users/save").permitAll()
                         .requestMatchers("/users/*/verify-password").permitAll()
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("https://m.facebook.com/**").permitAll()
                         .requestMatchers("/users/**").permitAll()
                         .requestMatchers("/users/get/**").authenticated() // Secure GET by user ID
                         .requestMatchers("/users/getAll").authenticated() // Secure GET all users

@@ -13,6 +13,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -103,8 +105,10 @@ public class UserController {
 //    }
 
 
+
+
 @GetMapping("/{username}")
-public UserAuth getUserByNick(@PathVariable("username") String username){
+public UserAuth getUserByNickOrEmail(@PathVariable("username") String username){
     UserAuth userAuthByNick = userAuthMapper.toUserAuth(userService.getUserDetailsByNick(username));
     UserAuth userAuthByEmail = userAuthMapper.toUserAuth(userService.getUserDetailsByEmail(username));
 
@@ -119,10 +123,34 @@ public UserAuth getUserByNick(@PathVariable("username") String username){
         System.out.println("User from 8081: " + userAuthByEmail);
         return userAuthByEmail;
     }
-
-
         return null;
 }
+
+    @GetMapping("/checkifexists")
+    public ResponseEntity<UserDTO> checkUserByNickOrEmail(@AuthenticationPrincipal Jwt jwt){
+        String nickName = jwt.getClaim("preferred_username");
+        String email = jwt.getClaim("email");
+        String subAsPassword = jwt.getClaim("sub");
+        boolean existsByNick = userService.checkIfExists(nickName);
+        boolean existsByEmail = userService.checkIfExists(email);
+
+        if(existsByNick || existsByEmail){
+            if(existsByNick){
+                User userDetailsByNick = userService.getUserDetailsByNick(nickName);
+                UserDTO userDTO = userMapper.toUserDTO(userDetailsByNick);
+                return new ResponseEntity<>( userDTO, HttpStatus.OK);
+            }else{
+                User userDetailsByEmail = userService.getUserDetailsByEmail(email);
+                UserDTO userDTO = userMapper.toUserDTO(userDetailsByEmail);
+                return new ResponseEntity<>( userDTO, HttpStatus.OK);
+            }
+        }else{
+            User user = new User(nickName, email, subAsPassword);
+            User userSaved = userService.saveUser(user);
+            UserDTO userDTO = userMapper.toUserDTO(userSaved);
+            return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        }
+    }
 
 
 @PostMapping("/{username}/verify-password")

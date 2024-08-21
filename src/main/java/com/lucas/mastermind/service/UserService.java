@@ -129,6 +129,13 @@ public class UserService {
         return null;
     }
 
+    public boolean checkIfExists(String emailOrNick){
+        boolean existsByEmail = userRepository.existsByEmail(emailOrNick);
+        boolean existsByNick = userRepository.existsByNick(emailOrNick);
+
+        return existsByEmail || existsByNick;
+    }
+
     static User unwrapUser(Optional<User> user, Long userId) {
         if (user.isPresent()) return user.get();
         else throw new UserNotFoundException(userId);
