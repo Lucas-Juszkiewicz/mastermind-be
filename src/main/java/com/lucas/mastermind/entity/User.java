@@ -53,7 +53,7 @@ public class User {
     private String password;
 
     @Column(name = "total")
-    private Long total;
+    private Long total = 0L;
 
     @Lob
     @Column(name = "img")

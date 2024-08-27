@@ -29,7 +29,7 @@ public class GameService {
         return gameRepository.save(game);
     }
 
-    public Game finish(Long id) {
+    public Game finish(Long id, Boolean isSuccess) {
         try {
             if (gipRepository.findById(id).isPresent()) {
                 GameInProgress gameInProgress = gipRepository.findById(id).get();
@@ -41,8 +41,22 @@ public class GameService {
                 int[][] guesses = gameInProgress.getGuesses();
                 int[][] responses = gameInProgress.getPreviousResponses();
 
-                Game game = new Game(startTime, round, sequence, guesses, responses);
-                return saveGame(game, userId);
+                Game game = new Game(startTime, round, isSuccess, sequence, guesses, responses);
+                Game savedGame = saveGame(game, userId);
+
+                if(isSuccess){
+                    User userById = userService.getUserById(userId);
+                    Long points = (long) game.getPoints();
+                    Long total = userById.getTotal();
+                    if (total == null) {
+                        total = 0L; // Initialize total to 0 if it is null
+                    }
+                    Long updatedTotal = total + points;
+                    userById.setTotal(updatedTotal);
+                    userService.updateUser(userId, userById);
+                }
+                System.out.println(savedGame);
+                return savedGame;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

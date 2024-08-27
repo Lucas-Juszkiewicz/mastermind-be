@@ -1,6 +1,5 @@
 package com.lucas.mastermind.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,6 +85,15 @@ public class Game {
         this.responses = responses;
     }
 
+    public Game(LocalDateTime startTime, int round, boolean isSuccess, int[] sequence, int[][] guesses, int[][] responses) {
+        this.startTime = startTime;
+        this.round = round;
+        this.isSuccess = isSuccess;
+        this.sequence = sequence;
+        this.guesses = guesses;
+        this.responses = responses;
+    }
+
     private void parseSequenceJson(){
         try {
             sequence = objectMapper.readValue(sequenceJson, int[].class);
@@ -118,6 +126,7 @@ public class Game {
 
     @PrePersist
     public void onCreate(){
+        System.out.println("onCreate");
         try {
             sequenceJson = objectMapper.writeValueAsString(sequence);
             guessesJson = objectMapper.writeValueAsString(guesses);
@@ -139,10 +148,12 @@ public class Game {
     }
 
     private void pointsCalculation(){
+        System.out.println("PointsCalculation" + isSuccess + " " + attempts);
         if (isSuccess) {
             long timeLeft = 1200-duration;
             if (attempts != 0) {
                 points = (double) timeLeft / attempts;
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!! Points: " + points + ", Time Left: " + timeLeft + ", Attempts: " + attempts );
             }else points = timeLeft;
         } else {
             points=0;

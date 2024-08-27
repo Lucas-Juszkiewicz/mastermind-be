@@ -25,7 +25,8 @@ public class GameController {
     @Transactional
     @GetMapping("/finishvictory/{gameId}")
     public ResponseEntity<Game> getFinishVictory(@PathVariable Long gameId){
-        Game finishVictoryResponse = gameService.finish(gameId);
+        Boolean isSuccess = true;
+        Game finishVictoryResponse = gameService.finish(gameId, isSuccess);
         gipService.deleteGameInProgress(gameId);
         if (finishVictoryResponse.getStartTime().isBefore(LocalDateTime.now()) && finishVictoryResponse.getDuration()>0) {
             return new ResponseEntity<>(finishVictoryResponse, HttpStatus.OK);
@@ -37,7 +38,8 @@ public class GameController {
     @Transactional
     @GetMapping("/finishzero/{gameId}")
     public ResponseEntity<Game> getFinishZero(@PathVariable Long gameId){
-        Game finishZeroResponse = gameService.finish(gameId);
+        Boolean isSuccess = false;
+        Game finishZeroResponse = gameService.finish(gameId, isSuccess);
         gipService.deleteGameInProgress(gameId);
         if (finishZeroResponse.getStartTime().isBefore(LocalDateTime.now()) && finishZeroResponse.getDuration()>0) {
             return new ResponseEntity<>(finishZeroResponse, HttpStatus.OK);

@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("http://localhost:3000", "http://localhost:8080", "https://m.facebook.com")
                 .allowedHeaders("*")
-                .allowCredentials(true);;
+                .allowCredentials(true);
     }
 
 
