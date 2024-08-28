@@ -130,7 +130,7 @@ public UserAuth getUserByNickOrEmail(@PathVariable("username") String username){
     public ResponseEntity<UserDTO> checkUserByNickOrEmail(@AuthenticationPrincipal Jwt jwt){
         String nickName = jwt.getClaim("preferred_username");
         String email = jwt.getClaim("email");
-        String subAsPassword = jwt.getClaim("sub");
+//        String subAsPassword = jwt.getClaim("sub");
         boolean existsByNick = userService.checkIfExists(nickName);
         boolean existsByEmail = userService.checkIfExists(email);
 
@@ -145,7 +145,7 @@ public UserAuth getUserByNickOrEmail(@PathVariable("username") String username){
                 return new ResponseEntity<>( userDTO, HttpStatus.OK);
             }
         }else{
-            User user = new User(nickName, email, subAsPassword);
+            User user = new User(nickName, email);
             User userSaved = userService.saveUser(user);
             UserDTO userDTO = userMapper.toUserDTO(userSaved);
             return new ResponseEntity<>(userDTO, HttpStatus.OK);

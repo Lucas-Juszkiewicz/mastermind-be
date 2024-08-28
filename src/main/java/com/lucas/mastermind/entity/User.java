@@ -69,6 +69,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     private Set<Game> games;
 
+    public User(String nickName, String email) {
+        this.nick = nick;
+        this.email = email;
+    }
+
     @PrePersist
     protected void onCreate() {
         registrationDate = LocalDateTime.now();
