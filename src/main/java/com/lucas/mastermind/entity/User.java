@@ -69,6 +69,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     private Set<Game> games;
 
+    @Column(name = "number_of_games")
+    private Long numberOfGames;
+
     public User(String nickName, String email) {
         this.nick = nick;
         this.email = email;

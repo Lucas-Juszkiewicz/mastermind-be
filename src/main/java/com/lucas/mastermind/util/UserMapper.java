@@ -19,7 +19,8 @@ public class UserMapper {
                 user.getTotal(),
                 user.getImg(),
                 user.getAvatar(),
-                user.getRegistrationDate()
+                user.getRegistrationDate(),
+                user.getNumberOfGames()
         );
     }
 }

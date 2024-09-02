@@ -4,6 +4,7 @@ import com.lucas.mastermind.entity.User;
 import com.lucas.mastermind.exception.DuplicateEmailException;
 import com.lucas.mastermind.exception.DuplicateNickException;
 import com.lucas.mastermind.exception.UserNotFoundException;
+import com.lucas.mastermind.repository.GameRepository;
 import com.lucas.mastermind.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
@@ -22,6 +23,9 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    GameRepository gameRepository;
 
     public User saveUser(User user) {
         try {
@@ -59,6 +63,14 @@ public class UserService {
     }
 
     public User updateUser(Long userId, User userWithUpdate) {
+        Long numberOfGamesValue;
+        if(gameRepository.countByUserId(userWithUpdate.getId()) == null){
+            numberOfGamesValue = 0L;
+        }else{
+            numberOfGamesValue = gameRepository.countByUserId(userWithUpdate.getId());
+        }
+        Long numberOfGames = numberOfGamesValue;
+
         try {
             String encodedPassword = passwordEncoder.encode(userWithUpdate.getPassword());
 
@@ -71,6 +83,7 @@ public class UserService {
                 user.setTotal(userWithUpdate.getTotal());
                 user.setImg(userWithUpdate.getImg());
                 user.setAvatar(userWithUpdate.getAvatar());
+                user.setNumberOfGames(numberOfGames);
                 return userRepository.save(user);
             });
             return unwrapUser(userUpdatedAndSaved, userId);

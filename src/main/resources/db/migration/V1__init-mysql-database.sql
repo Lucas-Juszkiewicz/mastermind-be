@@ -16,6 +16,7 @@ CREATE TABLE `users` (
   `img` TINYBLOB  DEFAULT NULL,
   `avatar` BIGINT(20) DEFAULT NULL,
   `registration_date` datetime(6) DEFAULT NULL,
+  `number_of_games` BIGINT(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;
 

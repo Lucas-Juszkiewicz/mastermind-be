@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface GameRepository extends CrudRepository<Game, Long> {
     @Override
     Game save(Game game);
+
+    Long countByUserId(Long userId);
 }

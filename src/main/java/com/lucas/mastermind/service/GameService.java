@@ -64,4 +64,9 @@ public class GameService {
         return null;
     }
 
+    public Long getNumberOfGamesByUserId(Long userId){
+        Long numberOfGames = gameRepository.countByUserId(userId);
+        return numberOfGames;
+    }
+
 }
