@@ -35,6 +35,7 @@ public class GameService {
                 GameInProgress gameInProgress = gipRepository.findById(id).get();
 
                 long userId = gameInProgress.getUserId();
+                User userById = userService.getUserById(userId);
                 LocalDateTime startTime = gameInProgress.getStartTime();
                 int round = gameInProgress.getRound();
                 int[] sequence = gameInProgress.getSequence();
@@ -45,7 +46,6 @@ public class GameService {
                 Game savedGame = saveGame(game, userId);
 
                 if(isSuccess){
-                    User userById = userService.getUserById(userId);
                     Long points = (long) game.getPoints();
                     Long total = userById.getTotal();
                     if (total == null) {
@@ -53,8 +53,21 @@ public class GameService {
                     }
                     Long updatedTotal = total + points;
                     userById.setTotal(updatedTotal);
+
                     userService.updateUser(userId, userById);
                 }
+
+                Long playedGames;
+                if(userById.getNumberOfGames() == null){
+                    playedGames = 0L;
+                }else{
+                    playedGames=userById.getNumberOfGames();
+                }
+
+                Long playedGamesPlusOne = playedGames + 1;
+                userById.setNumberOfGames(playedGamesPlusOne);
+
+                userService.updateUser(userId, userById);
                 System.out.println(savedGame);
                 return savedGame;
             }

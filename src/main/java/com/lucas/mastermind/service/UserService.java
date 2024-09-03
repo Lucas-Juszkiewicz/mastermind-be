@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -63,30 +64,24 @@ public class UserService {
     }
 
     public User updateUser(Long userId, User userWithUpdate) {
-        Long numberOfGamesValue;
-        if(gameRepository.countByUserId(userWithUpdate.getId()) == null){
-            numberOfGamesValue = 0L;
-        }else{
-            numberOfGamesValue = gameRepository.countByUserId(userWithUpdate.getId());
-        }
-        Long numberOfGames = numberOfGamesValue;
+//        Long numberOfGamesValue;
+//        if(gameRepository.countByUserId(userWithUpdate.getId()) == null){
+//            numberOfGamesValue = 0L;
+//        }else{
+//            numberOfGamesValue = gameRepository.countByUserId(userWithUpdate.getId());
+//        }
+//        Long numberOfGames = numberOfGamesValue;
 
         try {
-            String encodedPassword = passwordEncoder.encode(userWithUpdate.getPassword());
-
-            Optional<User> userUpdatedAndSaved = userRepository.findById(userId).map(user -> {
-                user.setNick(userWithUpdate.getNick());
+//            String encodedPassword = passwordEncoder.encode(userWithUpdate.getPassword());
+            User user = unwrapUser(userRepository.findById(userId), userId);
+            if (!Objects.equals(userWithUpdate.getEmail(), "")) {
                 user.setEmail(userWithUpdate.getEmail());
+            }
+            if (!Objects.equals(userWithUpdate.getCountry(), "")) {
                 user.setCountry(userWithUpdate.getCountry());
-                user.setPassword(encodedPassword);
-                user.setGames(userWithUpdate.getGames());
-                user.setTotal(userWithUpdate.getTotal());
-                user.setImg(userWithUpdate.getImg());
-                user.setAvatar(userWithUpdate.getAvatar());
-                user.setNumberOfGames(numberOfGames);
-                return userRepository.save(user);
-            });
-            return unwrapUser(userUpdatedAndSaved, userId);
+            }
+            return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
@@ -108,16 +103,16 @@ public class UserService {
         return null;
     }
 
-    public User getUserDetailsByNick(String nick, String password){
+    public User getUserDetailsByNick(String nick, String password) {
 
         String[] passwordParts = password.split("=");
         String actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
         System.out.println("######################" + nick + " Pass: " + actualPassword);
 
-        if(userRepository.findByNick(nick).isPresent()){
+        if (userRepository.findByNick(nick).isPresent()) {
             User user = userRepository.findByNick(nick).get();
-            if(passwordEncoder.matches(actualPassword, user.getPassword())){
-                System.out.println("Is it equal? :" +passwordEncoder.matches(actualPassword, user.getPassword()));
+            if (passwordEncoder.matches(actualPassword, user.getPassword())) {
+                System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
                 return user;
             }
 
@@ -132,17 +127,17 @@ public class UserService {
         return null;
     }
 
-    public User getUserDetailsByEmail(String email, String password){
-        if(userRepository.findByEmail(email).isPresent()){
+    public User getUserDetailsByEmail(String email, String password) {
+        if (userRepository.findByEmail(email).isPresent()) {
             User user = userRepository.findByEmail(email).get();
-            if(passwordEncoder.matches(password, user.getPassword())){
+            if (passwordEncoder.matches(password, user.getPassword())) {
                 return user;
             }
         }
         return null;
     }
 
-    public boolean checkIfExists(String emailOrNick){
+    public boolean checkIfExists(String emailOrNick) {
         boolean existsByEmail = userRepository.existsByEmail(emailOrNick);
         boolean existsByNick = userRepository.existsByNick(emailOrNick);
 
