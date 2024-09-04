@@ -86,10 +86,11 @@ public class UserService {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
                 String constraintName = constraintViolationException.getConstraintName();
-                if (constraintName.equals("unique_nick")) {
-                    throw new DuplicateNickException("Nick '" + userWithUpdate.getNick() + "' is already taken.");
-                } else if (constraintName.equals("unique_email")) {
-                    throw new DuplicateEmailException("Email '" + userWithUpdate.getEmail() + "' is already registered.");
+                System.out.println(constraintName);
+                if (constraintName != null) {
+                    if (constraintName.equals("users.unique_email")) {
+                        throw new DuplicateEmailException("Email '" + userWithUpdate.getEmail() + "' is already registered.");
+                    }
                 }
             }
             throw e;
