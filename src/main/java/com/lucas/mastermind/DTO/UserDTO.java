@@ -29,11 +29,26 @@ public class UserDTO {
 
     @Lob
     private byte[] img;
+
+    private String imgAsString;
+
     private Long avatar;
 
     private LocalDateTime registrationDate;
 
     private Long numberOfGames;
+
+    public UserDTO(Long id, String nick, String email, String country, Long total, String imgAsString, Long avatar, LocalDateTime registrationDate, Long numberOfGames) {
+        this.id = id;
+        this.nick = nick;
+        this.email = email;
+        this.country = country;
+        this.total = total;
+        this.imgAsString = imgAsString;
+        this.avatar = avatar;
+        this.registrationDate = registrationDate;
+        this.numberOfGames = numberOfGames;
+    }
 
     public UserDTO(Long id, String nick, String email, String country, Long total, byte[] img, Long avatar, LocalDateTime registrationDate, Long numberOfGames) {
         this.id = id;

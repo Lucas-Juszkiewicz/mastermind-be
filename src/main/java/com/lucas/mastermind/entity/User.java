@@ -56,7 +56,7 @@ public class User {
     private Long total = 0L;
 
     @Lob
-    @Column(name = "img")
+    @Column(name = "img", columnDefinition = "MEDIUMBLOB")
     private byte[] img;
 
     @Column(name = "avatar")
