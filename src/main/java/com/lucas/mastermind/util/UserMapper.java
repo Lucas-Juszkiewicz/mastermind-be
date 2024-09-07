@@ -15,9 +15,13 @@ public class UserMapper {
         if (user == null) {
             return null;
         }
-
+       String imgAsString;
         byte[] img = user.getImg();
-        String imgAsString = Base64.getEncoder().encodeToString(img);
+if(img != null){
+    imgAsString = Base64.getEncoder().encodeToString(img);
+}else{
+    imgAsString = null;
+}
 
         return new UserDTO(
                 user.getId(),

@@ -7,13 +7,11 @@ public class UpdatePasswordRequest {
     private String passOne;
     private String passTwo;
     private String passOld;
-    private Long userId;
 
-    public UpdatePasswordRequest(String passOne, String passTwo, String passOld, Long userId) {
+    public UpdatePasswordRequest(String passOne, String passTwo, String passOld) {
         this.passOne = passOne;
         this.passTwo = passTwo;
         this.passOld = passOld;
-        this.userId = userId;
     }
 
     public String getPassOne() {
@@ -40,11 +38,5 @@ public class UpdatePasswordRequest {
         this.passOld = passOld;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }

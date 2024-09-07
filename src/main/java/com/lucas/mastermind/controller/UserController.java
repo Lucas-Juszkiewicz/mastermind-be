@@ -105,20 +105,25 @@ public class UserController {
     public ResponseEntity<HttpStatus> passUpdate(@RequestBody UpdatePasswordRequest request, @AuthenticationPrincipal Jwt jwt) {
         String nick = jwt.getClaim("preferred_username");
         String sub = jwt.getClaim("sub");
-        Long userId = request.getUserId();
         String passOne = request.getPassOne();
         String passTwo = request.getPassTwo();
+
+        System.out.println("AAAAAAAAAAAAAAAAAAAAA: " + request);
+        System.out.println("passOne: " + passOne);
+        System.out.println("passTwo: " + passTwo);
 
         User userByNickAndSub = userService.getUserDetailsByNick(nick, sub);
         User userByNickAndPassword = userService.getUserDetailsByNick(nick, request.getPassOld());
 
         if (userByNickAndSub != null) {
             userByNickAndSub.setPassword(passOne);
+            userService.saveUser(userByNickAndSub);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } else if (userByNickAndPassword != null) {
             if (passOne.equals(passTwo)) {
                 userByNickAndPassword.setPassword(passOne);
+                userService.saveUser(userByNickAndPassword);
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);

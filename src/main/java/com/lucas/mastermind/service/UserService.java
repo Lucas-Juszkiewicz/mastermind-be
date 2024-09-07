@@ -105,13 +105,19 @@ public class UserService {
     }
 
     public User getUserDetailsByNick(String nick, String password) {
-
-        String[] passwordParts = password.split("=");
-        String actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
+        String[] passwordParts;
+        String actualPassword;
+if(password.contains("=")){
+    passwordParts = password.split("=");
+    actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
+}else{
+    actualPassword=password;
+}
         System.out.println("######################" + nick + " Pass: " + actualPassword);
 
         if (userRepository.findByNick(nick).isPresent()) {
             User user = userRepository.findByNick(nick).get();
+            System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
             if (passwordEncoder.matches(actualPassword, user.getPassword())) {
                 System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
                 return user;
