@@ -113,17 +113,17 @@ public class UserController {
         System.out.println("passTwo: " + passTwo);
 
         User userByNickAndSub = userService.getUserDetailsByNick(nick, sub);
-        User userByNickAndPassword = userService.getUserDetailsByNick(nick, request.getPassOld());
+        User userByNickAndPassOld = userService.getUserDetailsByNick(nick, request.getPassOld());
 
         if (userByNickAndSub != null) {
             userByNickAndSub.setPassword(passOne);
             userService.saveUser(userByNickAndSub);
             return new ResponseEntity<>(HttpStatus.OK);
 
-        } else if (userByNickAndPassword != null) {
+        } else if (userByNickAndPassOld != null) {
             if (passOne.equals(passTwo)) {
-                userByNickAndPassword.setPassword(passOne);
-                userService.saveUser(userByNickAndPassword);
+                userByNickAndPassOld.setPassword(passOne);
+                userService.saveUser(userByNickAndPassOld);
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -181,6 +181,7 @@ public class UserController {
 
     @GetMapping("/{username}")
     public UserAuth getUserByNickOrEmail(@PathVariable("username") String username) {
+        System.out.println("Username to find by: " + username);
         UserAuth userAuthByNick = userAuthMapper.toUserAuth(userService.getUserDetailsByNick(username));
         UserAuth userAuthByEmail = userAuthMapper.toUserAuth(userService.getUserDetailsByEmail(username));
 
