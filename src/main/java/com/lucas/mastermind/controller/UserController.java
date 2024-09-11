@@ -102,13 +102,13 @@ public class UserController {
     }
 
     @PostMapping("/passUpdate")
-    public ResponseEntity<HttpStatus> passUpdate(@RequestBody UpdatePasswordRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<String> passUpdate(@RequestBody UpdatePasswordRequest request, @AuthenticationPrincipal Jwt jwt) {
         String nick = jwt.getClaim("preferred_username");
         String sub = jwt.getClaim("sub");
         String passOne = request.getPassOne();
         String passTwo = request.getPassTwo();
 
-        System.out.println("AAAAAAAAAAAAAAAAAAAAA: " + request);
+        System.out.println("Request: " + request);
         System.out.println("passOne: " + passOne);
         System.out.println("passTwo: " + passTwo);
 
@@ -118,19 +118,19 @@ public class UserController {
         if (userByNickAndSub != null) {
             userByNickAndSub.setPassword(passOne);
             userService.saveUser(userByNickAndSub);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("Password updated successfully!", HttpStatus.OK);
 
         } else if (userByNickAndPassOld != null) {
             if (passOne.equals(passTwo)) {
                 userByNickAndPassOld.setPassword(passOne);
                 userService.saveUser(userByNickAndPassOld);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>("Password updated successfully!", HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
+                return new ResponseEntity<>("Passwords do not match", HttpStatus.CONFLICT);
             }
         }
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Recent password is invalid", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/get/{userId}")
