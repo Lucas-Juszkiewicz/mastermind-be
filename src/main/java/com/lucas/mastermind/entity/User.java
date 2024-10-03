@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
+@Getter
 public class User {
     public User() {
     }
@@ -28,6 +30,14 @@ public class User {
         this.nick = nick;
         this.email = email;
         this.password = password;
+    }
+
+    public Long getTotal() {
+        return total;
+    }
+
+    public Long getNumberOfGames() {
+        return numberOfGames;
     }
 
     @Id

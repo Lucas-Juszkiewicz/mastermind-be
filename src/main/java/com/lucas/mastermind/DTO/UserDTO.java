@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class UserDTO {
 
     private String country;
 
+    @Getter
     private Long total;
 
     @Lob
@@ -36,6 +38,7 @@ public class UserDTO {
 
     private LocalDateTime registrationDate;
 
+    @Getter
     private Long numberOfGames;
 
     public UserDTO(Long id, String nick, String email, String country, Long total, String imgAsString, Long avatar, LocalDateTime registrationDate, Long numberOfGames) {
@@ -72,6 +75,7 @@ public class UserDTO {
         this.avatar = avatar;
         this.registrationDate = registrationDate;
     }
+
 
     @Override
     public String toString() {

@@ -173,6 +173,11 @@ if(password.contains("=")){
         return null;
     }
 
+    public List<User> getTop3UsersByTotal() {
+
+        return userRepository.findTop3UsersByTotalPerGameRatioNative();
+    }
+
     public boolean checkIfExists(String emailOrNick) {
         boolean existsByEmail = userRepository.existsByEmail(emailOrNick);
         boolean existsByNick = userRepository.existsByNick(emailOrNick);
@@ -184,4 +189,6 @@ if(password.contains("=")){
         if (user.isPresent()) return user.get();
         else throw new UserNotFoundException(userId);
     }
+
+
 }

@@ -47,4 +47,17 @@ public class GameController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
+
+    @Transactional
+    @GetMapping("/finishrounds/{gameId}")
+    public ResponseEntity<Game> getFinishRounds(@PathVariable Long gameId){
+        Boolean isSuccess = false;
+        Game finishRoundsResponse = gameService.finish(gameId, isSuccess);
+        gipService.deleteGameInProgress(gameId);
+        if (finishRoundsResponse.getStartTime().isBefore(LocalDateTime.now()) && finishRoundsResponse.getDuration()>0) {
+            return new ResponseEntity<>(finishRoundsResponse, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
 }

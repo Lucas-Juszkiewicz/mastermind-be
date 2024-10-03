@@ -60,6 +60,10 @@ public class GameInProgressController {
     @PostMapping("/check")
     public ResponseEntity<GameInProgressDTO> postResponseAfterGuess(@RequestBody GameInProgressDTO gameInProgressDTO){
         GameInProgressDTO responseAfterGuess = gipService.getResponseAfterGuess(gameInProgressDTO);
+
+//        if(responseAfterGuess.getFinalMessage().equals("defeat")){
+//
+//        }
         return new ResponseEntity<>(responseAfterGuess, HttpStatus.OK);
     }
 

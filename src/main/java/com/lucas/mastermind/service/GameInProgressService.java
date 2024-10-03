@@ -72,7 +72,6 @@ public class GameInProgressService {
             }
             responseAfterGuess.setFinalMessage(finalMessage);
 
-
             int[][] previousResponses = gameInProgress.getPreviousResponses();
             previousResponses[round] = responseAfterGuess.getResponse();
 
