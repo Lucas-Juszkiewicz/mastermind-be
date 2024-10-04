@@ -77,7 +77,7 @@ public class UserController {
             // Here you would save the imageBytes to the database
             User userById = userService.getUserById(userId);
             userById.setImg(imageBytes);
-            User userWithAvatar = userService.saveUser(userById);
+            User userWithAvatar = userService.updateUser(userId, userById);
             UserDTO userDTO = userMapper.toUserDTO(userWithAvatar);
 
             return new ResponseEntity<>(userDTO, HttpStatus.ACCEPTED);

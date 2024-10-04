@@ -75,10 +75,10 @@ public class UserService {
         try {
 //            String encodedPassword = passwordEncoder.encode(userWithUpdate.getPassword());
             User user = unwrapUser(userRepository.findById(userId), userId);
-            if (!Objects.equals(userWithUpdate.getEmail(), "")) {
+            if (!Objects.equals(userWithUpdate.getEmail(), "") && !Objects.equals(userWithUpdate.getEmail(), user.getEmail())) {
                 user.setEmail(userWithUpdate.getEmail());
             }
-            if (!Objects.equals(userWithUpdate.getCountry(), "")) {
+            if (!Objects.equals(userWithUpdate.getCountry(), "") && !Objects.equals(userWithUpdate.getCountry(), user.getCountry())) {
                 user.setCountry(userWithUpdate.getCountry());
             }
             return userRepository.save(user);
