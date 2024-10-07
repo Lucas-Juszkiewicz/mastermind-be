@@ -9,6 +9,9 @@ public class TheBestThreeDTO {
      private UserDTO second;
      private UserDTO third;
 
+     public TheBestThreeDTO() {
+     }
+
      public TheBestThreeDTO(UserDTO first, UserDTO second, UserDTO third) {
           this.first = first;
           this.second = second;

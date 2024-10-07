@@ -2,6 +2,7 @@ package com.lucas.mastermind.controller;
 
 import com.lucas.mastermind.DTO.CheckIfExistsDTO;
 import com.lucas.mastermind.DTO.GameInProgressDTO;
+import com.lucas.mastermind.entity.Game;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.service.GameInProgressService;
 import com.lucas.mastermind.service.UserService;
@@ -28,6 +29,9 @@ public class GameInProgressController {
 
     @Autowired
     GameInProgressMapper gipMapper;
+
+    @Autowired
+    GameController gameController;
 
 //    @GetMapping("/start/{userId}")
 //    public ResponseEntity<GameInProgress> getSequenceAndStart(@PathVariable Long userId){
@@ -65,6 +69,16 @@ public class GameInProgressController {
 //
 //        }
         return new ResponseEntity<>(responseAfterGuess, HttpStatus.OK);
+    }
+
+    @GetMapping("/endgame/{userId}")
+    public ResponseEntity<Game> endGameToStartNewGame(@PathVariable Long userId){
+        Long gameId = gipService.findGamesInProgressByUserId(userId).getId();
+        ResponseEntity<Game> endGameResponse = gameController.getFinishZero(gameId);
+        if(endGameResponse.getStatusCode().is2xxSuccessful()){
+            return new ResponseEntity<>(endGameResponse.getBody(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @GetMapping("/get")

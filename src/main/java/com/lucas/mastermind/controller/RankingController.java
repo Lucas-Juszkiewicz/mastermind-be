@@ -28,7 +28,7 @@ public class RankingController {
             System.out.println(theBestThree);
             return new ResponseEntity<>(theBestThree, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 }

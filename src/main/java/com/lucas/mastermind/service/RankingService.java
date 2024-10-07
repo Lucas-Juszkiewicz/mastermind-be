@@ -19,29 +19,40 @@ public class RankingService {
 
     UserMapper userMapper;
 
-    public TheBestThreeDTO getTheBestThree(){
+    public TheBestThreeDTO getTheBestThree() {
 
 //        List<User> top3UsersByTotal = userService.getTop3UsersByTotal();
 //        List<UserDTO> top3UsersDTO = top3UsersByTotal.stream().sorted(Comparator.comparing(a -> a.getTotal() / a.getNumberOfGames()).reversed()).map(a -> userMapper.toUserDTO(a)).collect(Collectors.toList());
 
-        List<UserDTO> listOfTheBestThree = userService.getTop3UsersByTotal().stream()
-                .map(user -> userMapper.toUserDTO(user))  // map User to UserDTO
-                .toList();
+        if (!userService.getTop3UsersByTotal().isEmpty()) {
+            List<UserDTO> listOfTheBestThree = userService.getTop3UsersByTotal().stream()
+                    .map(user -> userMapper.toUserDTO(user))  // map User to UserDTO
+                    .toList();
 
-        List<UserDTO> sortedBestThree = listOfTheBestThree.stream()
-                .sorted(Comparator.comparingDouble(this::computeAvg).reversed())
-                .collect(Collectors.toList());
+            List<UserDTO> sortedBestThree = listOfTheBestThree.stream()
+                    .sorted(Comparator.comparingDouble(this::computeAvg).reversed())
+                    .collect(Collectors.toList());
 
+            TheBestThreeDTO response = new TheBestThreeDTO();
+            for (int i = 0; i < sortedBestThree.size(); i++) {
+                switch (i) {
+                    case 0 -> response.setFirst(sortedBestThree.get(i));
+                    case 1 -> response.setSecond(sortedBestThree.get(i));
+                    case 2 -> response.setThird(sortedBestThree.get(i));
+                }
+            }
 
-        return new TheBestThreeDTO(sortedBestThree.get(0), sortedBestThree.get(1), sortedBestThree.get(2));
+            return response;
+        }
+        return null;
     }
 
-    double computeAvg(UserDTO user){
+    double computeAvg(UserDTO user) {
         Long total = user.getTotal();
         Long numberOfGames = user.getNumberOfGames();
-        if(total != 0 && numberOfGames != 0){
+        if (total != 0 && numberOfGames != 0) {
             return (double) total / numberOfGames;
-        }else {
+        } else {
             return 0;
         }
     }
