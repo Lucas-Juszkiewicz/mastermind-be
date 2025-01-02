@@ -1,9 +1,12 @@
 package com.lucas.mastermind.controller;
 
+import com.lucas.mastermind.DTO.CheckIfExistsDTO;
 import com.lucas.mastermind.DTO.GameInProgressDTO;
+import com.lucas.mastermind.entity.Game;
 import com.lucas.mastermind.entity.GameInProgress;
 import com.lucas.mastermind.service.GameInProgressService;
 import com.lucas.mastermind.service.UserService;
+import com.lucas.mastermind.util.GameInProgressMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,12 @@ public class GameInProgressController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    GameInProgressMapper gipMapper;
+
+    @Autowired
+    GameController gameController;
+
 //    @GetMapping("/start/{userId}")
 //    public ResponseEntity<GameInProgress> getSequenceAndStart(@PathVariable Long userId){
 //        GameInProgress gameInProgress = new GameInProgress(userId);
@@ -38,7 +47,7 @@ public class GameInProgressController {
 
     @GetMapping("/start")
     public ResponseEntity<GameInProgress> getSequenceAndStart(@AuthenticationPrincipal Jwt jwt){
-        String nickName = jwt.getClaim("name");
+        String nickName = jwt.getClaim("preferred_username");
         Long userId = userService.getUserDetailsByNick(nickName).getId();
         System.out.println(userId);
         System.out.println(nickName);
@@ -55,7 +64,50 @@ public class GameInProgressController {
     @PostMapping("/check")
     public ResponseEntity<GameInProgressDTO> postResponseAfterGuess(@RequestBody GameInProgressDTO gameInProgressDTO){
         GameInProgressDTO responseAfterGuess = gipService.getResponseAfterGuess(gameInProgressDTO);
+
+//        if(responseAfterGuess.getFinalMessage().equals("defeat")){
+//
+//        }
         return new ResponseEntity<>(responseAfterGuess, HttpStatus.OK);
+    }
+
+    @GetMapping("/endgame/{userId}")
+    public ResponseEntity<Game> endGameToStartNewGame(@PathVariable Long userId){
+        Long gameId = gipService.findGamesInProgressByUserId(userId).getId();
+        ResponseEntity<Game> endGameResponse = gameController.getFinishZero(gameId);
+        if(endGameResponse.getStatusCode().is2xxSuccessful()){
+            return new ResponseEntity<>(endGameResponse.getBody(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<GameInProgressDTO> getGameAfterRecall(@AuthenticationPrincipal Jwt jwt){
+        String nickName = jwt.getClaim("preferred_username");
+        Long userId = userService.getUserDetailsByNick(nickName).getId();
+        GameInProgress gameInProgress = gipService.findGamesInProgressByUserId(userId);
+        GameInProgressDTO gameInProgressDTO = gipMapper.toGameInProgressDTO(gameInProgress);
+        if(gameInProgressDTO != null){
+            return new ResponseEntity<>(gameInProgressDTO, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+    }
+
+    @GetMapping("/checkifexists")
+    public ResponseEntity<CheckIfExistsDTO> checkIfGameInProgressExists(@AuthenticationPrincipal Jwt jwt){
+        String nickName = jwt.getClaim("preferred_username");
+        Long userId = userService.getUserDetailsByNick(nickName).getId();
+        GameInProgress gameInProgress = gipService.findGamesInProgressByUserId(userId);
+        CheckIfExistsDTO checkIfExists;
+        if(gameInProgress != null){
+            checkIfExists = new CheckIfExistsDTO(true);
+        }else {
+            checkIfExists = new CheckIfExistsDTO(false);
+        }
+        return new ResponseEntity<>(checkIfExists, HttpStatus.OK);
+
     }
 
 }

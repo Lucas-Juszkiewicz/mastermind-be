@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -25,13 +26,44 @@ public class UserDTO {
 
     private String country;
 
+    @Getter
     private Long total;
 
     @Lob
     private byte[] img;
+
+    private String imgAsString;
+
     private Long avatar;
 
     private LocalDateTime registrationDate;
+
+    @Getter
+    private Long numberOfGames;
+
+    public UserDTO(Long id, String nick, String email, String country, Long total, String imgAsString, Long avatar, LocalDateTime registrationDate, Long numberOfGames) {
+        this.id = id;
+        this.nick = nick;
+        this.email = email;
+        this.country = country;
+        this.total = total;
+        this.imgAsString = imgAsString;
+        this.avatar = avatar;
+        this.registrationDate = registrationDate;
+        this.numberOfGames = numberOfGames;
+    }
+
+    public UserDTO(Long id, String nick, String email, String country, Long total, byte[] img, Long avatar, LocalDateTime registrationDate, Long numberOfGames) {
+        this.id = id;
+        this.nick = nick;
+        this.email = email;
+        this.country = country;
+        this.total = total;
+        this.img = img;
+        this.avatar = avatar;
+        this.registrationDate = registrationDate;
+        this.numberOfGames = numberOfGames;
+    }
 
     public UserDTO(Long id, String nick, String email, String country, Long total, byte[] img, Long avatar, LocalDateTime registrationDate) {
         this.id = id;
@@ -43,6 +75,7 @@ public class UserDTO {
         this.avatar = avatar;
         this.registrationDate = registrationDate;
     }
+
 
     @Override
     public String toString() {

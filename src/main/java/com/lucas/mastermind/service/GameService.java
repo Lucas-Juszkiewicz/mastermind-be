@@ -29,25 +29,57 @@ public class GameService {
         return gameRepository.save(game);
     }
 
-    public Game finish(Long id) {
+    public Game finish(Long id, Boolean isSuccess) {
         try {
             if (gipRepository.findById(id).isPresent()) {
                 GameInProgress gameInProgress = gipRepository.findById(id).get();
 
                 long userId = gameInProgress.getUserId();
+                User userById = userService.getUserById(userId);
                 LocalDateTime startTime = gameInProgress.getStartTime();
                 int round = gameInProgress.getRound();
                 int[] sequence = gameInProgress.getSequence();
                 int[][] guesses = gameInProgress.getGuesses();
                 int[][] responses = gameInProgress.getPreviousResponses();
 
-                Game game = new Game(startTime, round, sequence, guesses, responses);
-                return saveGame(game, userId);
+                Game game = new Game(startTime, round, isSuccess, sequence, guesses, responses);
+                Game savedGame = saveGame(game, userId);
+
+                if(isSuccess){
+                    Long points = (long) game.getPoints();
+                    Long total = userById.getTotal();
+                    if (total == null) {
+                        total = 0L; // Initialize total to 0 if it is null
+                    }
+                    Long updatedTotal = total + points;
+                    userById.setTotal(updatedTotal);
+
+                    userService.updateUser(userId, userById);
+                }
+
+                Long playedGames;
+                if(userById.getNumberOfGames() == null){
+                    playedGames = 0L;
+                }else{
+                    playedGames=userById.getNumberOfGames();
+                }
+
+                Long playedGamesPlusOne = playedGames + 1;
+                userById.setNumberOfGames(playedGamesPlusOne);
+
+                userService.updateUser(userId, userById);
+                System.out.println(savedGame);
+                return savedGame;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    public Long getNumberOfGamesByUserId(Long userId){
+        Long numberOfGames = gameRepository.countByUserId(userId);
+        return numberOfGames;
     }
 
 }

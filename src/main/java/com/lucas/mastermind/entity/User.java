@@ -1,12 +1,12 @@
 package com.lucas.mastermind.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -14,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
+@Getter
 public class User {
     public User() {
     }
@@ -31,6 +32,14 @@ public class User {
         this.password = password;
     }
 
+    public Long getTotal() {
+        return total;
+    }
+
+    public Long getNumberOfGames() {
+        return numberOfGames;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
@@ -42,6 +51,7 @@ public class User {
     private String nick;
 
     @Column(name = "email", unique = true)
+    @NotBlank(message = "You have to provide your Email!")
     @Email
     private String email;
 
@@ -53,10 +63,10 @@ public class User {
     private String password;
 
     @Column(name = "total")
-    private Long total;
+    private Long total = 0L;
 
     @Lob
-    @Column(name = "img")
+    @Column(name = "img", columnDefinition = "MEDIUMBLOB")
     private byte[] img;
 
     @Column(name = "avatar")
@@ -68,6 +78,14 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     private Set<Game> games;
+
+    @Column(name = "number_of_games")
+    private Long numberOfGames;
+
+    public User(String nickName, String email) {
+        this.nick = nick;
+        this.email = email;
+    }
 
     @PrePersist
     protected void onCreate() {

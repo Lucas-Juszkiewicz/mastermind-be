@@ -4,6 +4,7 @@ import com.lucas.mastermind.entity.User;
 import com.lucas.mastermind.exception.DuplicateEmailException;
 import com.lucas.mastermind.exception.DuplicateNickException;
 import com.lucas.mastermind.exception.UserNotFoundException;
+import com.lucas.mastermind.repository.GameRepository;
 import com.lucas.mastermind.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -22,6 +24,9 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    GameRepository gameRepository;
 
     public User saveUser(User user) {
         try {
@@ -59,29 +64,33 @@ public class UserService {
     }
 
     public User updateUser(Long userId, User userWithUpdate) {
-        try {
-            String encodedPassword = passwordEncoder.encode(userWithUpdate.getPassword());
+//        Long numberOfGamesValue;
+//        if(gameRepository.countByUserId(userWithUpdate.getId()) == null){
+//            numberOfGamesValue = 0L;
+//        }else{
+//            numberOfGamesValue = gameRepository.countByUserId(userWithUpdate.getId());
+//        }
+//        Long numberOfGames = numberOfGamesValue;
 
-            Optional<User> userUpdatedAndSaved = userRepository.findById(userId).map(user -> {
-                user.setNick(userWithUpdate.getNick());
+        try {
+//            String encodedPassword = passwordEncoder.encode(userWithUpdate.getPassword());
+            User user = unwrapUser(userRepository.findById(userId), userId);
+            if (!Objects.equals(userWithUpdate.getEmail(), "") && !Objects.equals(userWithUpdate.getEmail(), user.getEmail())) {
                 user.setEmail(userWithUpdate.getEmail());
+            }
+            if (!Objects.equals(userWithUpdate.getCountry(), "") && !Objects.equals(userWithUpdate.getCountry(), user.getCountry())) {
                 user.setCountry(userWithUpdate.getCountry());
-                user.setPassword(encodedPassword);
-                user.setGames(userWithUpdate.getGames());
-                user.setTotal(userWithUpdate.getTotal());
-                user.setImg(userWithUpdate.getImg());
-                user.setAvatar(userWithUpdate.getAvatar());
-                return userRepository.save(user);
-            });
-            return unwrapUser(userUpdatedAndSaved, userId);
+            }
+            return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
                 String constraintName = constraintViolationException.getConstraintName();
-                if (constraintName.equals("unique_nick")) {
-                    throw new DuplicateNickException("Nick '" + userWithUpdate.getNick() + "' is already taken.");
-                } else if (constraintName.equals("unique_email")) {
-                    throw new DuplicateEmailException("Email '" + userWithUpdate.getEmail() + "' is already registered.");
+                System.out.println(constraintName);
+                if (constraintName != null) {
+                    if (constraintName.equals("users.unique_email")) {
+                        throw new DuplicateEmailException("Email '" + userWithUpdate.getEmail() + "' is already registered.");
+                    }
                 }
             }
             throw e;
@@ -95,16 +104,31 @@ public class UserService {
         return null;
     }
 
-    public User getUserDetailsByNick(String nick, String password){
+    public User getUserDetailsByNick(String nick, String password) {
+        String[] passwordParts;
+        String actualPassword;
+if(password.contains("=")){
+    passwordParts = password.split("=");
+    actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
+}else{
+    actualPassword=password;
+}
+        System.out.println("getUserDetailsByNick - userService: ");
+        System.out.println(("nick:" + nick));
+        System.out.println("password:" + password);
+        System.out.println("######################" + nick + " Pass:" + actualPassword);
 
-        String[] passwordParts = password.split("=");
-        String actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
-        System.out.println("######################" + nick + " Pass: " + actualPassword);
-
-        if(userRepository.findByNick(nick).isPresent()){
+        if (userRepository.findByNick(nick).isPresent()) {
             User user = userRepository.findByNick(nick).get();
-            if(passwordEncoder.matches(actualPassword, user.getPassword())){
-                System.out.println("Is it equal? :" +passwordEncoder.matches(actualPassword, user.getPassword()));
+
+            System.out.println("UserByNick from DB:");
+            System.out.println("nick:" + user.getNick());
+            System.out.println("email:" + user.getEmail());
+            System.out.println("password:" + user.getPassword());
+
+            System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
+            if (passwordEncoder.matches(actualPassword, user.getPassword())) {
+                System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
                 return user;
             }
 
@@ -119,18 +143,52 @@ public class UserService {
         return null;
     }
 
-    public User getUserDetailsByEmail(String email, String password){
-        if(userRepository.findByEmail(email).isPresent()){
+    public User getUserDetailsByEmail(String email, String password) {
+        String[] passwordParts;
+        String actualPassword;
+        if(password.contains("=")){
+            passwordParts = password.split("=");
+            actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
+        }else{
+            actualPassword=password;
+        }
+
+        System.out.println("getUserDetailsByEmail - userService: ");
+        System.out.println(("Email:" + email));
+        System.out.println("password:" + password);
+        System.out.println("######################" + email + " Pass:" + actualPassword);
+
+        if (userRepository.findByEmail(email).isPresent()) {
             User user = userRepository.findByEmail(email).get();
-            if(passwordEncoder.matches(password, user.getPassword())){
+
+            System.out.println("UserByNick from DB:");
+            System.out.println("nick:" + user.getNick());
+            System.out.println("email:" + user.getEmail());
+            System.out.println("password:" + user.getPassword());
+            System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
+            if (passwordEncoder.matches(actualPassword, user.getPassword())) {
                 return user;
             }
         }
         return null;
     }
 
+    public List<User> getTop3UsersByTotal() {
+
+        return userRepository.findTop3UsersByTotalPerGameRatioNative();
+    }
+
+    public boolean checkIfExists(String emailOrNick) {
+        boolean existsByEmail = userRepository.existsByEmail(emailOrNick);
+        boolean existsByNick = userRepository.existsByNick(emailOrNick);
+
+        return existsByEmail || existsByNick;
+    }
+
     static User unwrapUser(Optional<User> user, Long userId) {
         if (user.isPresent()) return user.get();
         else throw new UserNotFoundException(userId);
     }
+
+
 }

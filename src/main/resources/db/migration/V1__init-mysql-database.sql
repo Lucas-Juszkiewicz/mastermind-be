@@ -13,9 +13,10 @@ CREATE TABLE `users` (
   `country` varchar(45) DEFAULT NULL,
   `password` varchar(225) DEFAULT NULL,
   `total` BIGINT (20) DEFAULT NULL,
-  `img` TINYBLOB  DEFAULT NULL,
+  `img` MEDIUMBLOB  DEFAULT NULL,
   `avatar` BIGINT(20) DEFAULT NULL,
   `registration_date` datetime(6) DEFAULT NULL,
+  `number_of_games` BIGINT(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;
 

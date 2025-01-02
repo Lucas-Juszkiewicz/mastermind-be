@@ -9,10 +9,19 @@ public class UserAuth {
     private String userId;
     private String roles = "";
 
+    private String country;
+
     public UserAuth(String email, String userNick, String userId) {
         this.email = email;
         this.username = userNick;
         this.userId = userId;
+    }
+
+    public UserAuth(String email, String userNick, String userId, String country) {
+        this.email = email;
+        this.username = userNick;
+        this.userId = userId;
+        this.country = country;
     }
 
     public String getFirstName() {
