@@ -49,8 +49,6 @@ public class GameInProgressController {
     public ResponseEntity<GameInProgress> getSequenceAndStart(@AuthenticationPrincipal Jwt jwt){
         String nickName = jwt.getClaim("preferred_username");
         Long userId = userService.getUserDetailsByNick(nickName).getId();
-        System.out.println(userId);
-        System.out.println(nickName);
         GameInProgress gameInProgress = new GameInProgress(userId);
         GameInProgress savedGameInProgress = gipService.saveGameInProgress(gameInProgress);
         if(savedGameInProgress != null){

@@ -37,7 +37,6 @@ public class UserService {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
                 String constraintName = constraintViolationException.getConstraintName();
-                System.out.println(constraintName);
                 if (constraintName != null) {
                     if (constraintName.equals("users.unique_nick")) {
                         throw new DuplicateNickException("Nick '" + user.getNick() + "' is already taken.");
@@ -86,7 +85,6 @@ public class UserService {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException constraintViolationException = (ConstraintViolationException) e.getCause();
                 String constraintName = constraintViolationException.getConstraintName();
-                System.out.println(constraintName);
                 if (constraintName != null) {
                     if (constraintName.equals("users.unique_email")) {
                         throw new DuplicateEmailException("Email '" + userWithUpdate.getEmail() + "' is already registered.");
@@ -107,28 +105,16 @@ public class UserService {
     public User getUserDetailsByNick(String nick, String password) {
         String[] passwordParts;
         String actualPassword;
-if(password.contains("=")){
-    passwordParts = password.split("=");
-    actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
-}else{
-    actualPassword=password;
-}
-        System.out.println("getUserDetailsByNick - userService: ");
-        System.out.println(("nick:" + nick));
-        System.out.println("password:" + password);
-        System.out.println("######################" + nick + " Pass:" + actualPassword);
-
+        if (password.contains("=")) {
+            passwordParts = password.split("=");
+            actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
+        } else {
+            actualPassword = password;
+        }
         if (userRepository.findByNick(nick).isPresent()) {
             User user = userRepository.findByNick(nick).get();
 
-            System.out.println("UserByNick from DB:");
-            System.out.println("nick:" + user.getNick());
-            System.out.println("email:" + user.getEmail());
-            System.out.println("password:" + user.getPassword());
-
-            System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
             if (passwordEncoder.matches(actualPassword, user.getPassword())) {
-                System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
                 return user;
             }
 
@@ -146,26 +132,15 @@ if(password.contains("=")){
     public User getUserDetailsByEmail(String email, String password) {
         String[] passwordParts;
         String actualPassword;
-        if(password.contains("=")){
+        if (password.contains("=")) {
             passwordParts = password.split("=");
             actualPassword = passwordParts.length > 1 ? passwordParts[1] : "";
-        }else{
-            actualPassword=password;
+        } else {
+            actualPassword = password;
         }
-
-        System.out.println("getUserDetailsByEmail - userService: ");
-        System.out.println(("Email:" + email));
-        System.out.println("password:" + password);
-        System.out.println("######################" + email + " Pass:" + actualPassword);
 
         if (userRepository.findByEmail(email).isPresent()) {
             User user = userRepository.findByEmail(email).get();
-
-            System.out.println("UserByNick from DB:");
-            System.out.println("nick:" + user.getNick());
-            System.out.println("email:" + user.getEmail());
-            System.out.println("password:" + user.getPassword());
-            System.out.println("Is it equal? :" + passwordEncoder.matches(actualPassword, user.getPassword()));
             if (passwordEncoder.matches(actualPassword, user.getPassword())) {
                 return user;
             }

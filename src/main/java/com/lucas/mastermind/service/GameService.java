@@ -68,7 +68,6 @@ public class GameService {
                 userById.setNumberOfGames(playedGamesPlusOne);
 
                 userService.updateUser(userId, userById);
-                System.out.println(savedGame);
                 return savedGame;
             }
         } catch (Exception e) {

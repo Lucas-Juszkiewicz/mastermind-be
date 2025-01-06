@@ -23,23 +23,15 @@ import java.util.Base64;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig{
-
+public class SecurityConfig {
 
 
     private PublicKey getPublicKeyFromString(String key) throws Exception {
-        // Remove the first and last lines (the BEGIN/END lines)
         String publicKeyPEM = key.replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
                 .replaceAll("\\s+", "");
-
-        // Decode the Base64 string
         byte[] decoded = Base64.getDecoder().decode(publicKeyPEM);
-
-        // Create a KeyFactory for RSA
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
-        // Generate the PublicKey
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decoded);
         return keyFactory.generatePublic(keySpec);
     }
@@ -61,8 +53,8 @@ public class SecurityConfig{
                         .requestMatchers("/").permitAll()
                         .requestMatchers("https://m.facebook.com/**").permitAll()
                         .requestMatchers("/users/**").permitAll()
-                        .requestMatchers("/users/get/**").authenticated() // Secure GET by user ID
-                        .requestMatchers("/users/getAll").authenticated() // Secure GET all users
+                        .requestMatchers("/users/get/**").authenticated()
+                        .requestMatchers("/users/getAll").authenticated()
                         .requestMatchers("/users/delete/**").authenticated()
                         .requestMatchers("/users/update/**").authenticated()
                         .anyRequest().authenticated()
@@ -78,13 +70,12 @@ public class SecurityConfig{
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        // Optionally set a role converter or other configurations here
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            // Convert JWT claims to granted authorities here if needed
-            return new ArrayList<>(); // Modify according to your needs
+            return new ArrayList<>();
         });
         return converter;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

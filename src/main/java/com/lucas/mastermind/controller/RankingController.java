@@ -25,7 +25,6 @@ public class RankingController {
     public ResponseEntity<TheBestThreeDTO> getTheBestThree(){
         TheBestThreeDTO theBestThree = rankingService.getTheBestThree();
         if (theBestThree != null) {
-            System.out.println(theBestThree);
             return new ResponseEntity<>(theBestThree, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

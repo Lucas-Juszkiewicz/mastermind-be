@@ -47,7 +47,6 @@ public class UserController {
         User savedUser = userService.saveUser(user);
 
         UserDTO userDTO = userMapper.toUserDTO(savedUser);
-        System.out.println(userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
@@ -82,7 +81,6 @@ public class UserController {
 
             return new ResponseEntity<>(userDTO, HttpStatus.ACCEPTED);
         } catch (Exception e) {
-            System.out.println(e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -107,10 +105,6 @@ public class UserController {
         String sub = jwt.getClaim("sub");
         String passOne = request.getPassOne();
         String passTwo = request.getPassTwo();
-
-        System.out.println("Request: " + request);
-        System.out.println("passOne: " + passOne);
-        System.out.println("passTwo: " + passTwo);
 
         User userByNickAndSub = userService.getUserDetailsByNick(nick, sub);
         User userByNickAndPassOld = userService.getUserDetailsByNick(nick, request.getPassOld());
@@ -181,19 +175,12 @@ public class UserController {
 
     @GetMapping("/{username}")
     public UserAuth getUserByNickOrEmail(@PathVariable("username") String username) {
-        System.out.println("Username to find by: " + username);
         UserAuth userAuthByNick = userAuthMapper.toUserAuth(userService.getUserDetailsByNick(username));
         UserAuth userAuthByEmail = userAuthMapper.toUserAuth(userService.getUserDetailsByEmail(username));
 
         if (userAuthByNick != null) {
-            System.out.println("Username to find by: " + username);
-            System.out.println("User to convert: " + userService.getUserDetailsByNick(username));
-            System.out.println("User from 8081: " + userAuthByNick);
             return userAuthByNick;
         } else if (userAuthByEmail != null) {
-            System.out.println("Username to find by: " + username);
-            System.out.println("User to convert: " + userService.getUserDetailsByEmail(username));
-            System.out.println("User from 8081: " + userAuthByEmail);
             return userAuthByEmail;
         }
         return null;
@@ -237,8 +224,6 @@ public class UserController {
         } else if (userDetailsByEmail != null) {
             returnValue.setResult(true);
         }
-
-        System.out.println("UserDetailsByNickOrEmail: " + userDetailsByNick);
         return returnValue;
     }
 }
