@@ -137,7 +137,7 @@ public class GameInProgress {
         try {
             Random random = new Random();
             for (int i = 0; i < sequence.length; i++) {
-                sequence[i] = random.nextInt(9) + 1;
+                sequence[i] = random.nextInt(10) + 1;
                 sequenceJson = objectMapper.writeValueAsString(sequence);
             }
         } catch (JsonProcessingException e) {
